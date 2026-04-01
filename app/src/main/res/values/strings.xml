@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">PdSESimonGameApp</string>
+    <string name="color_blue">Blue</string>
+    <string name="color_red">Red</string>
+    <string name="color_yellow">Yellow</string>
+    <string name="color_cyan">Cyan</string>
+    <string name="color_magenta">Magenta</string>
+    <string name="color_green">Green</string>
+    <string name="CANCELLA">CANCELLA</string>
+    <string name="FINE_PARTITA">FINE PARTITA</string>
+    <string name="outputDefaultString">Sequenza inserita</string>
+
+    <string name="strImgBack">Immagine sfondo</string>
+    <string name="strImgIcon">Immagine icona</string>
 </resources>
