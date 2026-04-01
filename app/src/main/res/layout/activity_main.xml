@@ -8,105 +8,144 @@
     tools:context=".MainActivity"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent">
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
+
+    <FrameLayout
+        android:id="@+id/imageFrame"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.1">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_launcher_background"
+            android:contentDescription="@string/strImgBack"
+            android:scaleType="centerCrop" />
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_launcher_foreground"
+            android:contentDescription="@string/strImgIcon"
+            android:layout_gravity="center"/>
+    </FrameLayout>
 
     <GridLayout
         android:id="@+id/inputG"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:rowCount="3"
         android:columnCount="2"
-        android:layout_margin="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/outputTV"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        android:layout_margin="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/imageFrame"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.4">
 
         <Button
-            android:id="@+id/btn1"
-            android:text="1"
+            android:id="@+id/redB"
+            android:text="@string/color_red"
             android:layout_row="0"
             android:layout_column="0"
             android:layout_rowWeight="1"
-            android:layout_columnWeight="1"/>
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/red"
+            android:textColor="@color/black"/>
         <Button
-            android:id="@+id/btn2"
-            android:text="2"
+            android:id="@+id/greenB"
+            android:text="@string/color_green"
             android:layout_row="0"
             android:layout_column="1"
             android:layout_rowWeight="1"
-            android:layout_columnWeight="1"/>
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/green"
+            android:textColor="@color/black"/>
         <Button
-            android:id="@+id/btn3"
-            android:text="3"
+            android:id="@+id/blueB"
+            android:text="@string/color_blue"
             android:layout_row="1"
             android:layout_column="0"
             android:layout_rowWeight="1"
-            android:layout_columnWeight="1"/>
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/blue"
+            android:textColor="@color/black"/>
         <Button
-            android:id="@+id/btn4"
-            android:text="4"
+            android:id="@+id/magentaB"
+            android:text="@string/color_magenta"
             android:layout_row="1"
             android:layout_column="1"
             android:layout_rowWeight="1"
-            android:layout_columnWeight="1"/>
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/magenta"
+            android:textColor="@color/black"/>
         <Button
-            android:id="@+id/btn5"
-            android:text="5"
+            android:id="@+id/yellowB"
+            android:text="@string/color_yellow"
             android:layout_row="2"
             android:layout_column="0"
             android:layout_rowWeight="1"
-            android:layout_columnWeight="1"/>
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/yellow"
+            android:textColor="@color/black"/>
         <Button
-            android:id="@+id/btn6"
-            android:text="6"
+            android:id="@+id/cyanB"
+            android:text="@string/color_cyan"
             android:layout_row="2"
             android:layout_column="1"
             android:layout_rowWeight="1"
-            android:layout_columnWeight="1"/>
+            android:layout_columnWeight="1"
+            android:backgroundTint="@color/cyan"
+            android:textColor="@color/black"/>
     </GridLayout>
 
     <TextView
         android:id="@+id/outputTV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:gravity="center"
-        android:text ="Sequenza inserita"
+        android:text ="@string/outputDefaultString"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
         android:padding="16dp"
         android:background="#EEEEEE"
         app:layout_constraintTop_toBottomOf="@+id/inputG"
-        app:layout_constraintBottom_toTopOf="@+id/areaPulsanti"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHeight_percent="0.2"/>
 
     <LinearLayout
         android:id="@+id/areaPulsanti"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:orientation="horizontal"
         android:gravity="center"
         android:weightSum="2"
         app:layout_constraintTop_toBottomOf="@+id/outputTV"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.3">
 
         <Button
             android:id="@+id/cancellaB"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
             android:layout_weight="1"
-            android:text="CANCELLA" />
+            android:text="@string/CANCELLA"
+            style="@style/ShapeAppearanceOverlay.Material3.Button" />
         <Button
             android:id="@+id/finePartitaB"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="FINE PARTITA"/>
+            android:text="@string/FINE_PARTITA"
+            style="@style/ShapeAppearanceOverlay.Material3.Button"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
