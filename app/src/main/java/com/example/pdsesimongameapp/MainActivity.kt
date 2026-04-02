@@ -1,5 +1,6 @@
 package com.example.pdsesimongameapp
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -7,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import kotlinx.coroutines.delay
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,6 +17,9 @@ class MainActivity : AppCompatActivity() {
     var isInputAbilitato = false
     var stringaInput = ""
 
+
+
+    //Controllo per input utente
     fun puoInserire() : Boolean {
        return isInputAbilitato
     }
@@ -41,6 +46,7 @@ class MainActivity : AppCompatActivity() {
             findViewById<Button>(R.id.cyanB)
         )
 
+
         cancellaB.setOnClickListener {
             //contenuto area di testo si azzera
             //sequenza in corso azzerata? intende la sequenza inserita
@@ -49,8 +55,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         finePartitaB.setOnClickListener {
-            isInputAbilitato = false
+            //isInputAbilitato = false
             //chiamata a seconda schermata
+
         }
 
         pulsantiInput.forEach { button -> button.setOnClickListener {
@@ -66,6 +73,8 @@ class MainActivity : AppCompatActivity() {
 
         //solo per debug adesso
         isInputAbilitato = true
+
+
 
     }
 }
