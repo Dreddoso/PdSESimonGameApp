@@ -6,8 +6,8 @@
     <string name="color_cyan">Cyan</string>
     <string name="color_magenta">Magenta</string>
     <string name="color_green">Green</string>
-    <string name="CANCELLA">CANCELLA</string>
-    <string name="FINE_PARTITA">FINE PARTITA</string>
+    <string name="cancella">CANCELLA</string>
+    <string name="fine_partita">FINE PARTITA</string>
     <string name="outputDefaultString">Sequenza inserita</string>
 
     <string name="strImgBack">Immagine sfondo</string>
