@@ -5,20 +5,17 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent">
+    tools:context=".MainActivity">
 
     <FrameLayout
         android:id="@+id/imageFrame"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/inputG"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.1">
+        app:layout_constraintVertical_weight="1">
 
         <ImageView
             android:layout_width="match_parent"
@@ -27,8 +24,8 @@
             android:contentDescription="@string/strImgBack"
             android:scaleType="centerCrop" />
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:src="@drawable/ic_launcher_foreground"
             android:contentDescription="@string/strImgIcon"
             android:layout_gravity="center"/>
@@ -36,21 +33,22 @@
 
     <GridLayout
         android:id="@+id/inputG"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:rowCount="3"
         android:columnCount="2"
         android:layout_margin="8dp"
         app:layout_constraintTop_toBottomOf="@+id/imageFrame"
+        app:layout_constraintBottom_toTopOf="@id/outputTV"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.4">
+        app:layout_constraintVertical_weight="4">
 
         <Button
             android:id="@+id/redB"
             android:text="@string/color_red"
-            android:layout_row="0"
-            android:layout_column="0"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:backgroundTint="@color/red"
@@ -58,8 +56,8 @@
         <Button
             android:id="@+id/greenB"
             android:text="@string/color_green"
-            android:layout_row="0"
-            android:layout_column="1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:backgroundTint="@color/green"
@@ -67,17 +65,17 @@
         <Button
             android:id="@+id/blueB"
             android:text="@string/color_blue"
-            android:layout_row="1"
-            android:layout_column="0"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:backgroundTint="@color/blue"
-            android:textColor="@color/black"/>
+            android:textColor="@color/white"/>
         <Button
             android:id="@+id/magentaB"
             android:text="@string/color_magenta"
-            android:layout_row="1"
-            android:layout_column="1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:backgroundTint="@color/magenta"
@@ -85,8 +83,8 @@
         <Button
             android:id="@+id/yellowB"
             android:text="@string/color_yellow"
-            android:layout_row="2"
-            android:layout_column="0"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:backgroundTint="@color/yellow"
@@ -94,8 +92,8 @@
         <Button
             android:id="@+id/cyanB"
             android:text="@string/color_cyan"
-            android:layout_row="2"
-            android:layout_column="1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:backgroundTint="@color/cyan"
@@ -104,7 +102,7 @@
 
     <TextView
         android:id="@+id/outputTV"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
         android:text ="@string/outputDefaultString"
@@ -114,36 +112,40 @@
         android:padding="16dp"
         android:background="#EEEEEE"
         app:layout_constraintTop_toBottomOf="@+id/inputG"
+        app:layout_constraintBottom_toTopOf="@id/areaPulsanti"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHeight_percent="0.2"/>
+        app:layout_constraintVertical_weight="2"/>
 
     <LinearLayout
         android:id="@+id/areaPulsanti"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
         android:gravity="center"
+        android:padding="8dp"
         android:weightSum="2"
         app:layout_constraintTop_toBottomOf="@+id/outputTV"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.3">
+        app:layout_constraintVertical_weight="3"
+        android:background="@color/cyan">
 
         <Button
             android:id="@+id/cancellaB"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
+            android:layout_margin="4dp"
             android:layout_weight="1"
             android:text="@string/CANCELLA"
             style="@style/ShapeAppearanceOverlay.Material3.Button" />
         <Button
             android:id="@+id/finePartitaB"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_margin="4dp"
             android:text="@string/FINE_PARTITA"
             style="@style/ShapeAppearanceOverlay.Material3.Button"/>
     </LinearLayout>
