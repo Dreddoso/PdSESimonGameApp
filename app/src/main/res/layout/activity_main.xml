@@ -52,7 +52,8 @@
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:backgroundTint="@color/red"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:layout_gravity="fill"/>
         <Button
             android:id="@+id/greenB"
             android:text="@string/color_green"
@@ -61,7 +62,8 @@
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:backgroundTint="@color/green"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:layout_gravity="fill"/>
         <Button
             android:id="@+id/blueB"
             android:text="@string/color_blue"
@@ -70,7 +72,8 @@
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:backgroundTint="@color/blue"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:layout_gravity="fill"/>
         <Button
             android:id="@+id/magentaB"
             android:text="@string/color_magenta"
@@ -79,7 +82,8 @@
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:backgroundTint="@color/magenta"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:layout_gravity="fill"/>
         <Button
             android:id="@+id/yellowB"
             android:text="@string/color_yellow"
@@ -88,7 +92,8 @@
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:backgroundTint="@color/yellow"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:layout_gravity="fill"/>
         <Button
             android:id="@+id/cyanB"
             android:text="@string/color_cyan"
@@ -97,7 +102,8 @@
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:backgroundTint="@color/cyan"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:layout_gravity="fill"/>
     </GridLayout>
 
     <TextView
