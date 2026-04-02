@@ -3,13 +3,19 @@ package com.example.pdsesimongameapp
 import android.widget.Button
 
 class SimonGame {
-    enum class ColoreSimon {
-        R,G,B,M,C,Y
+    var mappaSimonColors : Map<Chat,R.color> = {
+         (G,R.color.Green)
+         (R,...
     }
 
-    fun getSimonColor(nome_colore : String){
-
+    fun getSimonColor(btn : Button){
+      //switch case
+      val char = btn.text.toString()[0]
+      if (mappaSimonColors.hasKey(char)){
+          return char
+      }else return ""
     }
+
     val maxElementiSequenza = 10
     var numElementiSequenzaCorrente = 0
     var sequenzaCorrenteDaRiprodurre = ""
@@ -46,7 +52,7 @@ class SimonGame {
     }
 
     fun creaSequenza(){
-
+       
     }
 
     fun startGame(){
