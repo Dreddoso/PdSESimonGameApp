@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PdSESimonGameApp</string>
     <string name="color_blue">Blue</string>
@@ -6,8 +7,8 @@
     <string name="color_cyan">Cyan</string>
     <string name="color_magenta">Magenta</string>
     <string name="color_green">Green</string>
-    <string name="cancella">CANCELLA</string>
-    <string name="fine_partita">FINE PARTITA</string>
-    <string name="outputDefaultString">Sequenza inserita</string>
+    <string name="cancella">DELETE</string>
+    <string name="fine_partita">END GAME</string>
+    <string name="outputDefaultString">Sequence inserted</string>
 
 </resources>
