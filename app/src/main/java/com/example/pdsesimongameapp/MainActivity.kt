@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
 
     //Controllo per input utente
-    fun puoInserire() : Boolean {
+    fun isInputGrigliaAbilitato() : Boolean {
        return isInputAbilitato
     }
 
@@ -37,16 +37,6 @@ class MainActivity : AppCompatActivity() {
         val finePartitaB = findViewById<Button>(R.id.finePartitaB)
         val outputTV = findViewById<TextView>(R.id.outputTV)
 
-        val pulsantiInput = listOf(
-            findViewById<Button>(R.id.redB),
-            findViewById<Button>(R.id.blueB),
-            findViewById<Button>(R.id.greenB),
-            findViewById<Button>(R.id.yellowB),
-            findViewById<Button>(R.id.magentaB),
-            findViewById<Button>(R.id.cyanB)
-        )
-
-
         cancellaB.setOnClickListener {
             //contenuto area di testo si azzera
             //sequenza in corso azzerata? intende la sequenza inserita
@@ -60,16 +50,6 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        pulsantiInput.forEach { button -> button.setOnClickListener {
-            //ogni bottone della griglia (se siamo in fase di inserimento sequenza)
-            //deve prendere il primo carattere della stringa contenuta nel suo text e inserirla nella stringa di input
-            //e nel valore text di outputTV
-            val stringaB = button.text.toString()
-            if (puoInserire()){
-                stringaInput += stringaB[0]
-                outputTV.text = stringaInput
-            }
-        } }
 
         //solo per debug adesso
         isInputAbilitato = true
