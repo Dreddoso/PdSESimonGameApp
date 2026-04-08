@@ -20,37 +20,52 @@
         app:layout_constraintEnd_toStartOf="@+id/outputTV"
         app:layout_constraintHorizontal_weight="1">
 
-        <View android:background="@color/cyan"
+           <View
+android:id="@+id/cyanV 
+android:background="@color/cyanV"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             />
-        <View android:background="@color/green"
+        <View
+ android:id="@+id/greenV
+android:background="@color/greenV"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"/>
-        <View android:background="@color/red"
+        <View
+android:id="@+id/redV 
+android:background="@color/redV"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"/>
-        <View android:background="@color/yellow"
+        <View
+ android:id="@+id/yellowV
+android:background="@color/yellowV"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"/>
-        <View android:background="@color/blue"
+        <View
+ android:id="@+id/blueV
+android:background="@color/blueV"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"/>
-        <View android:background="@color/magenta"
+        <View
+ android:id="@+id/magentaV
+android:background="@color/magentaV"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"/>
+ 
+
+
     </GridLayout>
 
     <TextView
