@@ -50,7 +50,42 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-
+val redV = findViewById<View>(R.id.redV)
+redV.setOnClickListener{
+     if (isInputAbilitato){
+          stringaInput += "R"
+     }
+}
+val greenV = findViewById<View>(R.id.greenV)
+redV.setOnClickListener{
+     if (isInputAbilitato){
+          stringaInput += "G"
+     }
+}
+val yellowV = findViewById<View>(R.id.yellowV)
+redV.setOnClickListener{
+     if (isInputAbilitato){
+          stringaInput += "Y"
+     }
+}
+val blueV = findViewById<View>(R.id.blueV)
+blueV.setOnClickListener{
+     if (isInputAbilitato){
+          stringaInput += "B"
+     }
+}
+val magentaV = findViewById<View>(R.id.magentaV)
+redV.setOnClickListener{
+     if (isInputAbilitato){
+          stringaInput += "M"
+     }
+}
+val cyanV = findViewById<View>(R.id.cyanV)
+redV.setOnClickListener{
+     if (isInputAbilitato){
+          stringaInput += "C"
+     }
+}
         //solo per debug adesso
         isInputAbilitato = true
 
