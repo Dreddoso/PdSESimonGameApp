@@ -74,6 +74,8 @@ class MainActivity : AppCompatActivity() {
         finePartitaB.setOnClickListener {
             //isInputAbilitato = false
             //chiamata a seconda schermata
+            //salvo la partita in qualsiasi caso mi trovi nel registro comune a entrambe le schermate
+            RegistroPartite.listaPartite.add(Partita(countRettangoliPremuti,stringaInput))
             val intent = Intent(this, Schermata2::class.java)
             startActivity(intent)
         }

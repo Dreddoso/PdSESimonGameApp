@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 class Schermata2 : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adattatoreRV : AdattatoreRV
-    private val listaPartite = mutableListOf<Partita>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +21,8 @@ class Schermata2 : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        val lista = RegistroPartite.listaPartite
+        adattatoreRV = AdattatoreRV(lista)
         //collegamento RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
