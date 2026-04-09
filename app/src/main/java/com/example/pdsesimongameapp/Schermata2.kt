@@ -17,4 +17,8 @@ class Schermata2 : AppCompatActivity() {
             insets
         }
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+    }
 }
