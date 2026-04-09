@@ -1,6 +1,8 @@
 package com.example.pdsesimongameapp
 
-import android.widget.Button
+
+//Come funziona una partita?
+//Viene data una sequenza
 
 class SimonGame {
     enum class ColoreSimon {

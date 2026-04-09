@@ -15,13 +15,18 @@ class MainActivity : AppCompatActivity() {
     //devo controllare quando l'input della griglia mi serve (perche l'utente deve inserire la sequenza)
     //o non mi serve perchè devo mostrare la sequenza all'utente o perché sono in fine partita
     var isInputAbilitato = false
+
+    //input di una partita = pressione dei rettangoli sulla griglia
+    //pulsante di cancella + pulsante fine partita
     var stringaInput = ""
+    var countRettangoliPremuti = 0
 
 
     fun aggiungiInput(carattere: String, outputTextView: TextView){
         if (isInputGrigliaAbilitato()){
             stringaInput += carattere
             outputTextView.text = stringaInput
+            countRettangoliPremuti++
         }
     }
 
@@ -62,6 +67,7 @@ class MainActivity : AppCompatActivity() {
             //sequenza in corso azzerata? intende la sequenza inserita
             outputTV.text = ""
             stringaInput = ""
+            countRettangoliPremuti = 0 //resetto anche il contatore ?
         }
 
         finePartitaB.setOnClickListener {
