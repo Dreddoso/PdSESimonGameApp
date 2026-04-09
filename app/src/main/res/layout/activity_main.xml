@@ -21,45 +21,75 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_weight="1">
 
-        <View
-android:id="@+id/cyanV 
-android:background="@color/cyanV"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            />
-        <View
- android:id="@+id/greenV
-android:background="@color/greenV"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"/>
-        <View
-android:id="@+id/redV 
-android:background="@color/redV"
+        <TextView
+            android:id="@+id/cyanV"
+            android:text="@string/color_cyan"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:background="@color/cyan"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"/>
-        <View
- android:id="@+id/yellowV
-android:background="@color/yellowV"
+
+        <TextView
+            android:id="@+id/greenV"
+            android:text="@string/color_green"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:background="@color/green"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"/>
-        <View
- android:id="@+id/blueV
-android:background="@color/blueV"
+        <TextView
+            android:id="@+id/redV"
+            android:text="@string/color_red"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:background="@color/red"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"/>
-        <View
- android:id="@+id/magentaV
-android:background="@color/magentaV"
+        <TextView
+            android:id="@+id/yellowV"
+            android:text="@string/color_yellow"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:background="@color/yellow"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"/>
+        <TextView
+            android:id="@+id/blueV"
+            android:text="@string/color_blue"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:background="@color/blue"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"/>
+        <TextView
+            android:id="@+id/magentaV"
+            android:text="@string/color_magenta"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:background="@color/magenta"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_rowWeight="1"

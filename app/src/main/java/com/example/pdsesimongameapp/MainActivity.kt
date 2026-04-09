@@ -1,14 +1,13 @@
 package com.example.pdsesimongameapp
 
-import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import kotlinx.coroutines.delay
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +17,12 @@ class MainActivity : AppCompatActivity() {
     var stringaInput = ""
 
 
+    fun aggiungiInput(carattere: String, outputTextView: TextView){
+        if (isInputAbilitato){
+            stringaInput += carattere
+            outputTextView.text = stringaInput
+        }
+    }
 
     //Controllo per input utente
     fun isInputGrigliaAbilitato() : Boolean {
@@ -50,42 +55,30 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-val redV = findViewById<View>(R.id.redV)
-redV.setOnClickListener{
-     if (isInputAbilitato){
-          stringaInput += "R"
-     }
-}
-val greenV = findViewById<View>(R.id.greenV)
-redV.setOnClickListener{
-     if (isInputAbilitato){
-          stringaInput += "G"
-     }
-}
-val yellowV = findViewById<View>(R.id.yellowV)
-redV.setOnClickListener{
-     if (isInputAbilitato){
-          stringaInput += "Y"
-     }
-}
-val blueV = findViewById<View>(R.id.blueV)
-blueV.setOnClickListener{
-     if (isInputAbilitato){
-          stringaInput += "B"
-     }
-}
-val magentaV = findViewById<View>(R.id.magentaV)
-redV.setOnClickListener{
-     if (isInputAbilitato){
-          stringaInput += "M"
-     }
-}
-val cyanV = findViewById<View>(R.id.cyanV)
-redV.setOnClickListener{
-     if (isInputAbilitato){
-          stringaInput += "C"
-     }
-}
+        val redV = findViewById<View>(R.id.redV)
+        redV.setOnClickListener{
+            aggiungiInput("R",outputTV)
+        }
+        val greenV = findViewById<View>(R.id.greenV)
+        greenV.setOnClickListener{
+            aggiungiInput("G",outputTV)
+        }
+        val yellowV = findViewById<View>(R.id.yellowV)
+        yellowV.setOnClickListener{
+            aggiungiInput("Y",outputTV)
+        }
+        val blueV = findViewById<View>(R.id.blueV)
+        blueV.setOnClickListener{
+            aggiungiInput("B",outputTV)
+        }
+        val magentaV = findViewById<View>(R.id.magentaV)
+        magentaV.setOnClickListener{
+            aggiungiInput("M",outputTV)
+        }
+        val cyanV = findViewById<View>(R.id.cyanV)
+        cyanV.setOnClickListener{
+            aggiungiInput("C",outputTV)
+        }
         //solo per debug adesso
         isInputAbilitato = true
 
