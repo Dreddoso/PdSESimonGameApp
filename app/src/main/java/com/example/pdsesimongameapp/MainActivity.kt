@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume(){
         super.onResume()
         val outputTV = findViewById<TextView>(R.id.outputTV)
-        outputTV.text = getString(R.string.outputDefaultString)
+        outputTV.text = stringaInput
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,23 +73,22 @@ class MainActivity : AppCompatActivity() {
         cancellaB.setOnClickListener {
             //contenuto area di testo si azzera
             //sequenza in corso azzerata? intende la sequenza inserita
-            outputTV.text = ""
+            outputTV.text = getString(R.string.outputDefaultString)
             stringaInput = ""
             countRettangoliPremuti = 0 //resetto anche il contatore ?
         }
 
         finePartitaB.setOnClickListener {
             //isInputAbilitato = false
+            //salvo partita
+            RegistroPartite.addPartita(countRettangoliPremuti, stringaInput)
             //chiamata a seconda schermata
-            //salvo la partita in qualsiasi caso mi trovi nel registro comune a entrambe le schermate
-            val partitaCorrente = Partita(countRettangoliPremuti,stringaInput)
-            RegistroPartite.listaPartite.add(partitaCorrente)
+            val intent = Intent(this, Schermata2::class.java)
+            startActivity(intent)
             //reset
             stringaInput = ""
             countRettangoliPremuti = 0
 
-            val intent = Intent(this, Schermata2::class.java)
-            startActivity(intent)
         }
 
         //posso scrivere questo in modo iterativo invece di specificarlo per ogni area di colore diverso?

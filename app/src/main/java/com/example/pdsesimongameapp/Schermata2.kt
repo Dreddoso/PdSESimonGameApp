@@ -21,7 +21,6 @@ class Schermata2 : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         adattatoreRV = AdattatoreRV(RegistroPartite.listaPartite)
         //collegamento RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
