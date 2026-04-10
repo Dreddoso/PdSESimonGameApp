@@ -10,12 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 class AdattatoreRV(private val lista: List<Partita>) : RecyclerView.Adapter<AdattatoreRV.PartitaViewHolder>() {
                     //al posto di un array come dataset devo usare qualcos'altro
     class PartitaViewHolder(view: View) : RecyclerView.ViewHolder(view){
-        val contatoreTV : TextView
-        val sequenzaTV : TextView
-        init {
-            contatoreTV = view.findViewById(R.id.contatoreTV)
-            sequenzaTV = view.findViewById(R.id.sequenzaInputTV)
-        }
+        val contatoreTV : TextView = view.findViewById(R.id.contatoreTV)
+        val sequenzaTV : TextView = view.findViewById(R.id.sequenzaInputTV)
+
     }
 
     //crea una view rispetto al layout di un singolo elemento che rappresenta una partita (file layout_partita.xml)

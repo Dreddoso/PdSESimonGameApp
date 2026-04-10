@@ -9,7 +9,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import kotlinx.coroutines.delay
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,6 +39,14 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putString("STRINGA_INPUT", stringaInput)
         outState.putBoolean("INPUT_ABILITATO", isInputAbilitato)
+    }
+
+    //è necessario? o lascio come è stato lasciato dalla partita precedente la ui
+    //                  mentre il cervello/gioco dietro è stato resettato
+    override fun onResume(){
+        super.onResume()
+        val outputTV = findViewById<TextView>(R.id.outputTV)
+        outputTV.text = getString(R.string.outputDefaultString)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,7 +82,12 @@ class MainActivity : AppCompatActivity() {
             //isInputAbilitato = false
             //chiamata a seconda schermata
             //salvo la partita in qualsiasi caso mi trovi nel registro comune a entrambe le schermate
-            RegistroPartite.listaPartite.add(Partita(countRettangoliPremuti,stringaInput))
+            val partitaCorrente = Partita(countRettangoliPremuti,stringaInput)
+            RegistroPartite.listaPartite.add(partitaCorrente)
+            //reset
+            stringaInput = ""
+            countRettangoliPremuti = 0
+
             val intent = Intent(this, Schermata2::class.java)
             startActivity(intent)
         }

@@ -21,16 +21,14 @@ class Schermata2 : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val lista = RegistroPartite.listaPartite
-        adattatoreRV = AdattatoreRV(lista)
+
+        adattatoreRV = AdattatoreRV(RegistroPartite.listaPartite)
         //collegamento RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adattatoreRV
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
+
 }
 
