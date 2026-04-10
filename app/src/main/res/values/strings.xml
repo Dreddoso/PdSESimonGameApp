@@ -8,6 +8,6 @@
     <string name="color_green">Green</string>
     <string name="cancella">DELETE</string>
     <string name="fine_partita">END GAME</string>
-    <string name="outputDefaultString">Sequence inserted</string>
+    <string name="outputDefaultString">. . .</string>
     <string name="default_test">TNT</string>
 </resources>

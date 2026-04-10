@@ -9,6 +9,6 @@
     <string name="color_green">Verde</string>
     <string name="cancella">CANCELLA</string>
     <string name="fine_partita">FINE PARTITA</string>
-    <string name="outputDefaultString">Sequenza inserita</string>
-
+    <string name="outputDefaultString">. . .</string>
+    <string name="default_test">TNT</string>
 </resources>
