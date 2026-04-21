@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putString("STRINGA_INPUT", stringaInput)
         outState.putBoolean("INPUT_ABILITATO", isInputAbilitato)
+        outState.putInt("CONTATORE_RECT", countRettangoliPremuti)
     }
 
     //è necessario? o lascio come è stato lasciato dalla partita precedente la ui
@@ -66,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState != null) {
             stringaInput = savedInstanceState.getString("STRINGA_INPUT","")
             isInputAbilitato = savedInstanceState.getBoolean("INPUT_ABILITATO",false)
+            countRettangoliPremuti = savedInstanceState.getInt("CONTATORE_RECT", 0)
             //aggiorno il testo della textview
             outputTV.text = stringaInput
         }
