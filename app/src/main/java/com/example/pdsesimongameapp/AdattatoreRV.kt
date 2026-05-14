@@ -1,5 +1,6 @@
 package com.example.pdsesimongameapp
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,17 @@ class AdattatoreRV(private val lista: List<Partita>) : RecyclerView.Adapter<Adat
     override fun onBindViewHolder(viewHolder: PartitaViewHolder, position: Int){
         val partita = lista[position]
         viewHolder.bind(partita)
+
+        viewHolder.itemView.setOnClickListener {
+            val context = viewHolder.itemView.context
+
+            val intent = Intent(context, DettaglioPartita::class.java)
+
+            intent.putExtra("contatore", partita.contatoreRettangoliPremuti)
+            intent.putExtra("sequenza", partita.sequenza)
+
+            context.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int {

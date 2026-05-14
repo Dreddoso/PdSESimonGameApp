@@ -16,5 +16,8 @@ class DettaglioPartita : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val contatore = intent.getIntExtra("contatore",0)
+        val sequenza = intent.getStringExtra("sequenza")
     }
 }
