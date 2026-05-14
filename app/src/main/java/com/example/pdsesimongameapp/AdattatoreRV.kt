@@ -10,11 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 class AdattatoreRV(private val lista: List<Partita>) : RecyclerView.Adapter<AdattatoreRV.PartitaViewHolder>() {
                     //al posto di un array come dataset devo usare qualcos'altro
     class PartitaViewHolder(view: View) : RecyclerView.ViewHolder(view){
+
         private val contatoreTV : TextView = view.findViewById(R.id.contatoreTV)
         private val sequenzaTV : TextView = view.findViewById(R.id.sequenzaInputTV)
                         fun bind(partita: Partita){
-                            //TODO: togliere hardcoded string "Count: " non è richiesto
-                            contatoreTV.text = "Count: ${partita.contatoreRettangoliPremuti}"
+                            contatoreTV.text = partita.contatoreRettangoliPremuti.toString()
                             sequenzaTV.text = partita.sequenza
                         }
     }
