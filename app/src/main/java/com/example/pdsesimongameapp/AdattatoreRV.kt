@@ -1,6 +1,10 @@
 package com.example.pdsesimongameapp
 
 import android.content.Intent
+import android.graphics.Color
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +20,16 @@ class AdattatoreRV(private val lista: List<Partita>) : RecyclerView.Adapter<Adat
         private val sequenzaTV : TextView = view.findViewById(R.id.sequenzaInputTV)
                         fun bind(partita: Partita){
                             contatoreTV.text = partita.contatoreRettangoliPremuti.toString()
-                            sequenzaTV.text = partita.sequenza
+                            //Dovrei modificare direttamente qua il colore della stringa?
+                            val sequenza = partita.sequenza
+                            val spannableString = SpannableString(sequenza)
+                            spannableString.setSpan(
+                                ForegroundColorSpan(Color.RED),
+                                partita.contatoreRettangoliPremuti - 1,
+                                sequenza.length,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+                            sequenzaTV.text = spannableString
                         }
     }
 
