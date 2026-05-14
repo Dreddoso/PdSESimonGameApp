@@ -132,10 +132,17 @@
             >
 
             <Button
-                android:id="@+id/cancellaB"
+                android:id="@+id/avviaB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/cancella"
+                android:text="@string/start"
+                style="@style/ShapeAppearanceOverlay.Material3.Button" />
+
+            <Button
+                android:id="@+id/pausaB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pause"
                 style="@style/ShapeAppearanceOverlay.Material3.Button" />
             <Button
                 android:id="@+id/finePartitaB"
