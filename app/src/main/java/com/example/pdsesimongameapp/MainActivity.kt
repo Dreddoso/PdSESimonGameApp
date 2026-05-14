@@ -14,8 +14,8 @@ class MainActivity : AppCompatActivity() {
 
     //devo controllare quando l'input della griglia mi serve (perche l'utente deve inserire la sequenza)
     //o non mi serve perchè devo mostrare la sequenza all'utente o perché sono in fine partita
-    var isInputAbilitato = false
-
+    var isInputAbilitato : Boolean = false
+    var partitaInPausa : Boolean = false
     //input di una partita = pressione dei rettangoli sulla griglia
     //pulsante di cancella + pulsante fine partita
     var stringaInput = ""
@@ -59,9 +59,12 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val cancellaB = findViewById<Button>(R.id.cancellaB)
-        val finePartitaB = findViewById<Button>(R.id.finePartitaB)
-        val outputTV = findViewById<TextView>(R.id.outputTV)
+
+        val outputTV : TextView = findViewById(R.id.outputTV)
+        val finePartitaB : Button = findViewById(R.id.finePartitaB)
+        val pausaB : Button = findViewById(R.id.pausaB)
+        val avviaB : Button = findViewById(R.id.avviaB)
+
 
         //controllo se esiste un stato precedente
         if (savedInstanceState != null) {
@@ -72,14 +75,28 @@ class MainActivity : AppCompatActivity() {
             outputTV.text = stringaInput
         }
 
-        cancellaB.setOnClickListener {
-            //contenuto area di testo si azzera
-            //sequenza in corso azzerata? intende la sequenza inserita
-            outputTV.text = getString(R.string.outputDefaultString)
-            stringaInput = ""
-            countRettangoliPremuti = 0 //resetto anche il contatore ?
+        avviaB.setOnClickListener {
+            //Disattiva Button
+            avviaB.isEnabled = false
+            //Attiva button fine partita
+            finePartitaB.isEnabled = true
+            //Aggiungere logica avvia partita
+
+        }
+        //Nel momento della creazione della schermata il pulsante di Pausa è disattivato
+        pausaB.isEnabled = false
+        //Attivo solo quando il computer propone
+        pausaB.setOnClickListener {
+            partitaInPausa = !partitaInPausa //cambio stato
+            if (partitaInPausa){
+                pausaB.text = resources.getString(R.string.resume)
+                //logica per pausa della partita
+            }else{
+                pausaB.text = resources.getString(R.string.pause)
+            }
         }
 
+        finePartitaB.isEnabled = false //Attivo solo durante una partita
         finePartitaB.setOnClickListener {
             //isInputAbilitato = false
             //salvo partita
