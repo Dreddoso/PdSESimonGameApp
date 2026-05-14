@@ -121,7 +121,5 @@ class MainActivity : AppCompatActivity() {
         //solo per debug adesso
         isInputAbilitato = true
 
-
-
     }
 }

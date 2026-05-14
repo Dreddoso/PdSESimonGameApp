@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/outputTV"
+        app:layout_constraintEnd_toStartOf="@+id/contenitoreParteBassa"
         app:layout_constraintHorizontal_weight="1">
 
         <TextView
@@ -95,52 +95,54 @@
             android:layout_columnWeight="1"/>
     </GridLayout>
 
-    <TextView
-        android:id="@+id/outputTV"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:gravity="center"
-        android:text ="@string/outputDefaultString"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:padding="16dp"
-        android:background="#EEEEEE"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/inputG"
-        app:layout_constraintEnd_toStartOf="@+id/areaPulsanti"
-        app:layout_constraintHorizontal_weight="1"/>
-
     <LinearLayout
-        android:id="@+id/areaPulsanti"
+        android:id="@+id/contenitoreParteBassa"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:orientation="vertical"
         android:weightSum="2"
-        android:gravity="center"
-        android:padding="8dp"
-        android:background="@color/cyan"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/inputG"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/outputTV"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1">
 
-        <Button
-            android:id="@+id/cancellaB"
+        <TextView
+            android:id="@+id/outputTV"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="@string/cancella"
-            style="@style/ShapeAppearanceOverlay.Material3.Button" />
-        <Button
-            android:id="@+id/finePartitaB"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="@string/fine_partita"
-            style="@style/ShapeAppearanceOverlay.Material3.Button"/>
-    </LinearLayout>
+            android:gravity="center"
+            android:text ="@string/outputDefaultString"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:padding="16dp"
+            android:background="#EEEEEE"
+            android:layout_weight="1"/>
 
+        <LinearLayout
+            android:id="@+id/areaPulsanti"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="8dp"
+            android:background="@color/cyan"
+            android:layout_weight="1"
+            >
+
+            <Button
+                android:id="@+id/cancellaB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancella"
+                style="@style/ShapeAppearanceOverlay.Material3.Button" />
+            <Button
+                android:id="@+id/finePartitaB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fine_partita"
+                style="@style/ShapeAppearanceOverlay.Material3.Button"/>
+        </LinearLayout>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

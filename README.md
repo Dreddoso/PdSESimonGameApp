@@ -3,7 +3,7 @@ Allestimento in corso
 
 ##Informazioni Android
 - Min SDK: API 24 (Android 7.0)
-- Target SDK: API 34 (Android 14)
+- Target SDK: API 35 
 - Compile SDK: API 36
 
 ##Emulatore utilizzato per test
