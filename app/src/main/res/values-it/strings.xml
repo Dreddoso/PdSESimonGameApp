@@ -14,4 +14,6 @@
     <string name="next">AVANTI</string>
     <string name="start">Avvia Partita</string>
     <string name="pause">Pausa</string>
+    <string name="resume">Riprendi</string>
+
 </resources>
