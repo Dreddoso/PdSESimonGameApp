@@ -11,7 +11,7 @@
     <!-- Bordo -->
     <stroke
         android:width="2dp"
-        android:color="#FFFFFF" />
+        android:color="#FFF33F" />
 
     <!-- Padding interno -->
     <padding
