@@ -25,7 +25,7 @@ class AdattatoreRV(private val lista: List<Partita>) : RecyclerView.Adapter<Adat
                             val spannableString = SpannableString(sequenza)
                             spannableString.setSpan(
                                 ForegroundColorSpan(Color.RED),
-                                partita.contatoreRettangoliPremuti - 1,
+                                partita.contatoreRettangoliPremuti,
                                 sequenza.length,
                                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                             )
