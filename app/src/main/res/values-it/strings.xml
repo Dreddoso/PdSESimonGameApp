@@ -12,4 +12,6 @@
     <string name="outputDefaultString">. . .</string>
     <string name="default_test">TNT</string>
     <string name="next">AVANTI</string>
+    <string name="start">Avvia Partita</string>
+    <string name="pause">Pausa</string>
 </resources>

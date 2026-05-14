@@ -12,4 +12,7 @@
     <string name="outputDefaultString">. . .</string>
     <string name="default_test">TNT</string>
     <string name="next">NEXT</string>
+    <string name="start">Start Game</string>
+    <string name="pause">Pause</string>
+
 </resources>
