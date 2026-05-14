@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         outState.putString("STRINGA_INPUT", stringaInput)
         outState.putBoolean("INPUT_ABILITATO", isInputAbilitato)
         outState.putInt("CONTATORE_RECT", countRettangoliPremuti)
+        outState.putBoolean("PARTITA_IN_PAUSA",partitaInPausa)
     }
 
     //è necessario? o lascio come è stato lasciato dalla partita precedente la ui
@@ -71,8 +72,15 @@ class MainActivity : AppCompatActivity() {
             stringaInput = savedInstanceState.getString("STRINGA_INPUT","")
             isInputAbilitato = savedInstanceState.getBoolean("INPUT_ABILITATO",false)
             countRettangoliPremuti = savedInstanceState.getInt("CONTATORE_RECT", 0)
+            partitaInPausa = savedInstanceState.getBoolean("PARTITA_IN_PAUSA",false)
             //aggiorno il testo della textview
             outputTV.text = stringaInput
+            //Manca gestione stato del gioco (qui sistema solo il testo del button)
+            if (partitaInPausa){
+                pausaB.text = resources.getString(R.string.resume)
+            }else{
+                pausaB.text = resources.getString(R.string.pause)
+            }
         }
 
         avviaB.setOnClickListener {
@@ -93,6 +101,7 @@ class MainActivity : AppCompatActivity() {
                 //logica per pausa della partita
             }else{
                 pausaB.text = resources.getString(R.string.pause)
+                //logica per riprendere la partita
             }
         }
 
@@ -135,8 +144,6 @@ class MainActivity : AppCompatActivity() {
         cyanV.setOnClickListener{
             aggiungiInput("C",outputTV)
         }
-        //solo per debug adesso
-        isInputAbilitato = true
 
     }
 }

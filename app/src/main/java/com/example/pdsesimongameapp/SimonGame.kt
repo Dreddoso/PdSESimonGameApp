@@ -1,5 +1,11 @@
 package com.example.pdsesimongameapp
 
+import android.widget.Button
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
 
 //Come funziona una partita?
 //Viene data una sequenza
@@ -9,9 +15,34 @@ package com.example.pdsesimongameapp
 //Quando l'utente fallisce o il limite di tempo scade, il gioco finisce.
 
 class SimonGame {
-    enum class SimonColor {
-        red, green, yellow, cyan, magenta, blue
+
+    var sequenzaCorrente = ""
+    var difficoltaSequenza = 1 //Lunghezza sequenza (Minimo 1)
+
+
+    fun resetPartita(){
+        sequenzaCorrente = ""
+        difficoltaSequenza = 1
     }
 
+    //cio nuovo livello +1 su lunghezza sequenza
+    fun aumentaDifficolta(){
+        difficoltaSequenza++
+        //la sequenza rimane uguale e genera un nuovo carattere
+    }
+
+    fun generaCarattere(){
+
+    }
+
+    fun evidenziaButton(button: Button, scope : CoroutineScope, alpha : Float = 0.4f, durataMs: Long = 150L){
+        scope.launch(Dispatchers.Main){
+            //abbassa alpha
+            button.alpha = alpha
+            delay(durataMs)
+            //ripristina dopo tot tempo
+            button.alpha = 1f
+        }
+    }
 
 }
