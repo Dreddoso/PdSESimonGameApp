@@ -4,34 +4,114 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+    //Componenti UI
+    lateinit var griglia : Map<Char, TextView>
+    //val outputTV : TextView = findViewById(R.id.outputTV)
+    //val finePartitaB : Button = findViewById(R.id.finePartitaB)
+    //val pausaB : Button = findViewById(R.id.pausaB)
+    //val avviaB : Button = findViewById(R.id.avviaB)
 
-    //devo controllare quando l'input della griglia mi serve (perche l'utente deve inserire la sequenza)
-    //o non mi serve perchè devo mostrare la sequenza all'utente o perché sono in fine partita
+    //FLAG di Stato del Gioco
     var isInputAbilitato : Boolean = false
     var partitaInPausa : Boolean = false
     var partitaInCorso : Boolean = false
-    //input di una partita = pressione dei rettangoli sulla griglia
-    //pulsante di cancella + pulsante fine partita
+    var isGameOver : Boolean = false
+
+    //Input
     var stringaInput = ""
     var countRettangoliPremuti = 0
+    var countRettangoliPremutiCorrettamente = 0
 
+    //Cache per ultimo turno
+    var precContatoreRettangoliCorretti = 0
+
+    //Istanza del Gioco
+    val simonGame : SimonGame = SimonGame()
 
     fun aggiungiInput(carattere: Char, outputTextView: TextView){
-        if (isInputGrigliaAbilitato()){
-            stringaInput += carattere
-            outputTextView.text = stringaInput
+        if (!isInputGrigliaAbilitato()) return
+
+        stringaInput += carattere
+        outputTextView.text = stringaInput
+        countRettangoliPremuti++
+
+        if (!simonGame.controllaUltimoCarattere(carattere)){
+            isGameOver = true
+            Toast.makeText(this, resources.getString(R.string.testo_errore),Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if(stringaInput.length == simonGame.difficoltaSequenza){
+            //Incremento contatore rettangoli corretti
+            countRettangoliPremutiCorrettamente++
+            completaTurno()
         }
     }
 
     //Controllo per input utente (utile o rindondante?)
     fun isInputGrigliaAbilitato() : Boolean {
        return isInputAbilitato
+    }
+
+    fun togglePausa(){
+        val pausaB = findViewById<Button>(R.id.pausaB)
+        partitaInPausa = !partitaInPausa
+        if (partitaInPausa){
+            pausaB.text = resources.getString(R.string.resume)
+        }else{
+            pausaB.text = resources.getString(R.string.pause)
+        }
+    }
+
+    fun completaTurno(){
+        isInputAbilitato = false
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(1000)
+            simonGame.aumentaDifficolta()
+            iniziaTurno()
+        }
+    }
+
+    fun iniziaTurno(){
+        if (countRettangoliPremuti != 0) precContatoreRettangoliCorretti = countRettangoliPremutiCorrettamente //se ho premuto almeno un elemento che sia giusto o sbagliato mi salvo quelli giusti
+
+        //Resetto input
+        isInputAbilitato = false
+        countRettangoliPremuti = 0
+        countRettangoliPremutiCorrettamente = 0
+
+        //Pulsante pausa serve per stoppare (e poi far ripartire) la visione della sequenza
+        val pausaB : Button = findViewById(R.id.pausaB)
+        pausaB.isEnabled = true
+
+        CoroutineScope(Dispatchers.Main).launch {
+
+            //ALLA fine ne genero uno alla volta, sono quelli da visualizzare che crescono
+            simonGame.sequenzaCorrente += simonGame.generaCarattere()
+
+            for(c in simonGame.sequenzaCorrente){
+                val view = griglia[c]!!
+                simonGame.evidenziaView(view = view, scope = this)
+                delay(1000)
+            }
+
+            pausaB.isEnabled = false
+            isInputAbilitato = true
+            stringaInput = ""
+            val output : TextView = findViewById(R.id.outputTV)
+            output.text = stringaInput
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle){
@@ -41,6 +121,8 @@ class MainActivity : AppCompatActivity() {
         outState.putInt("CONTATORE_RECT", countRettangoliPremuti)
         outState.putBoolean("PARTITA_IN_PAUSA",partitaInPausa)
         outState.putBoolean("PARTITA_IN_CORSO",partitaInCorso)
+        outState.putInt("CONTATORE_CORRECT_RECT",countRettangoliPremutiCorrettamente)
+        outState.putInt("CONTATORE_TURNO_PRECEDENTE", precContatoreRettangoliCorretti)
     }
 
     //è necessario? o lascio come è stato lasciato dalla partita precedente la ui
@@ -67,6 +149,7 @@ class MainActivity : AppCompatActivity() {
         val avviaB : Button = findViewById(R.id.avviaB)
 
 
+
         //controllo se esiste un stato precedente
         if (savedInstanceState != null) {
             stringaInput = savedInstanceState.getString("STRINGA_INPUT","")
@@ -74,14 +157,10 @@ class MainActivity : AppCompatActivity() {
             countRettangoliPremuti = savedInstanceState.getInt("CONTATORE_RECT", 0)
             partitaInPausa = savedInstanceState.getBoolean("PARTITA_IN_PAUSA",false)
             partitaInCorso = savedInstanceState.getBoolean("PARTITA_IN_CORSO", false)
+            countRettangoliPremutiCorrettamente = savedInstanceState.getInt("CONTATORE_CORRECT_RECT", 0)
+            precContatoreRettangoliCorretti = savedInstanceState.getInt("CONTATORE_TURNO_PRECEDENTE",0)
             //aggiorno il testo della textview
             outputTV.text = stringaInput
-            //Manca gestione stato del gioco (qui sistema solo il testo del button)
-            if (partitaInPausa){
-                pausaB.text = resources.getString(R.string.resume)
-            }else{
-                pausaB.text = resources.getString(R.string.pause)
-            }
         }
 
         avviaB.setOnClickListener {
@@ -90,38 +169,32 @@ class MainActivity : AppCompatActivity() {
             avviaB.isEnabled = false
             //Attiva button fine partita
             finePartitaB.isEnabled = true
-            //Aggiungere logica avvia partita
 
+            //Avvia partita
+            iniziaTurno()
         }
-        //Nel momento della creazione della schermata il pulsante di Pausa è disattivato
-        pausaB.isEnabled = false
-        //Attivo solo quando il computer propone
+
         pausaB.setOnClickListener {
-            partitaInPausa = !partitaInPausa //cambio stato
-            if (partitaInPausa){
-                pausaB.text = resources.getString(R.string.resume)
-                //logica per pausa della partita
-            }else{
-                pausaB.text = resources.getString(R.string.pause)
-                //logica per riprendere la partita
-            }
+            togglePausa()
+            //TODO capire come stoppare coroutine e tenere traccia del punto in cui sono nel mostrare la sequenza
         }
 
-        finePartitaB.isEnabled = false //Attivo solo durante una partita
         finePartitaB.setOnClickListener {
             //isInputAbilitato = false
             //salvo partita
-            RegistroPartite.addPartita(countRettangoliPremuti, stringaInput)
+            RegistroPartite.addPartita(countRettangoliPremutiCorrettamente, stringaInput)
             //chiamata a seconda schermata
             val intent = Intent(this, Schermata2::class.java)
             startActivity(intent)
             //reset
             stringaInput = ""
             countRettangoliPremuti = 0
-
+            countRettangoliPremutiCorrettamente = 0
+            precContatoreRettangoliCorretti = 0
+            simonGame.resetPartita()
         }
 
-        val griglia = mapOf<Char,TextView>(
+        griglia = mapOf<Char,TextView>(
             'R' to findViewById(R.id.redV),
             'G' to findViewById(R.id.greenV),
             'B' to findViewById(R.id.blueV),
@@ -136,5 +209,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //TODO giusto disattivare qui buttons finepartita e pausa
+        pausaB.isEnabled = false
+        finePartitaB.isEnabled = false
     }
 }
