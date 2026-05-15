@@ -2,7 +2,6 @@ package com.example.pdsesimongameapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -16,17 +15,17 @@ class MainActivity : AppCompatActivity() {
     //o non mi serve perchè devo mostrare la sequenza all'utente o perché sono in fine partita
     var isInputAbilitato : Boolean = false
     var partitaInPausa : Boolean = false
+    var partitaInCorso : Boolean = false
     //input di una partita = pressione dei rettangoli sulla griglia
     //pulsante di cancella + pulsante fine partita
     var stringaInput = ""
     var countRettangoliPremuti = 0
 
 
-    fun aggiungiInput(carattere: String, outputTextView: TextView){
+    fun aggiungiInput(carattere: Char, outputTextView: TextView){
         if (isInputGrigliaAbilitato()){
             stringaInput += carattere
             outputTextView.text = stringaInput
-            countRettangoliPremuti++
         }
     }
 
@@ -41,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         outState.putBoolean("INPUT_ABILITATO", isInputAbilitato)
         outState.putInt("CONTATORE_RECT", countRettangoliPremuti)
         outState.putBoolean("PARTITA_IN_PAUSA",partitaInPausa)
+        outState.putBoolean("PARTITA_IN_CORSO",partitaInCorso)
     }
 
     //è necessario? o lascio come è stato lasciato dalla partita precedente la ui
@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
             isInputAbilitato = savedInstanceState.getBoolean("INPUT_ABILITATO",false)
             countRettangoliPremuti = savedInstanceState.getInt("CONTATORE_RECT", 0)
             partitaInPausa = savedInstanceState.getBoolean("PARTITA_IN_PAUSA",false)
+            partitaInCorso = savedInstanceState.getBoolean("PARTITA_IN_CORSO", false)
             //aggiorno il testo della textview
             outputTV.text = stringaInput
             //Manca gestione stato del gioco (qui sistema solo il testo del button)
@@ -84,6 +85,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         avviaB.setOnClickListener {
+            partitaInCorso = true
             //Disattiva Button
             avviaB.isEnabled = false
             //Attiva button fine partita
@@ -119,30 +121,19 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        //posso scrivere questo in modo iterativo invece di specificarlo per ogni area di colore diverso?
-        val redV = findViewById<View>(R.id.redV)
-        redV.setOnClickListener{
-            aggiungiInput("R",outputTV)
-        }
-        val greenV = findViewById<View>(R.id.greenV)
-        greenV.setOnClickListener{
-            aggiungiInput("G",outputTV)
-        }
-        val yellowV = findViewById<View>(R.id.yellowV)
-        yellowV.setOnClickListener{
-            aggiungiInput("Y",outputTV)
-        }
-        val blueV = findViewById<View>(R.id.blueV)
-        blueV.setOnClickListener{
-            aggiungiInput("B",outputTV)
-        }
-        val magentaV = findViewById<View>(R.id.magentaV)
-        magentaV.setOnClickListener{
-            aggiungiInput("M",outputTV)
-        }
-        val cyanV = findViewById<View>(R.id.cyanV)
-        cyanV.setOnClickListener{
-            aggiungiInput("C",outputTV)
+        val griglia = mapOf<Char,TextView>(
+            'R' to findViewById(R.id.redV),
+            'G' to findViewById(R.id.greenV),
+            'B' to findViewById(R.id.blueV),
+            'M' to findViewById(R.id.magentaV),
+            'Y' to findViewById(R.id.yellowV),
+            'C' to findViewById(R.id.cyanV)
+        )
+
+        for ((char,view) in griglia){
+            view.setOnClickListener {
+                aggiungiInput(char, outputTV)
+            }
         }
 
     }
