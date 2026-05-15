@@ -2,6 +2,7 @@ package com.example.pdsesimongameapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -11,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -21,6 +23,9 @@ class MainActivity : AppCompatActivity() {
     //val finePartitaB : Button = findViewById(R.id.finePartitaB)
     //val pausaB : Button = findViewById(R.id.pausaB)
     //val avviaB : Button = findViewById(R.id.avviaB)
+
+    //JOB per gestire la pausa durante visualizzazione della sequenza
+    var turnoJob : Job? = null
 
     //FLAG di Stato del Gioco
     var isInputAbilitato : Boolean = false
@@ -44,11 +49,20 @@ class MainActivity : AppCompatActivity() {
 
         stringaInput += carattere
         outputTextView.text = stringaInput
-        countRettangoliPremuti++
+        countRettangoliPremuti += 1
+        evidenziaView(griglia[carattere]!!,CoroutineScope(Dispatchers.Main))
+
 
         if (!simonGame.controllaUltimoCarattere(carattere)){
             isGameOver = true
+            partitaInCorso = false
+            isInputAbilitato = false
             Toast.makeText(this, resources.getString(R.string.testo_errore),Toast.LENGTH_SHORT).show()
+            //Fine partita TODO aggiungi logica per salvare
+            val finePartitaButton : Button = findViewById(R.id.finePartitaB)
+            finePartitaButton.isEnabled = false
+            val pausaButton : Button = findViewById(R.id.pausaB)
+            pausaButton.isEnabled = false
             return
         }
 
@@ -64,6 +78,18 @@ class MainActivity : AppCompatActivity() {
        return isInputAbilitato
     }
 
+    /*TODO meglio togliere la creazione di un altra coroutine e quindi togliere scope, e rendere la fun -> suspend fun ??
+            quindi stesso codice senza launch*/
+    fun evidenziaView(view: View, scope : CoroutineScope, alpha : Float = 0.4f, durataMs: Long = 150L){
+        scope.launch(Dispatchers.Main){
+            //abbassa alpha
+            view.alpha = alpha
+            delay(durataMs)
+            //ripristina dopo tot tempo
+            view.alpha = 1f
+        }
+    }
+
     fun togglePausa(){
         val pausaB = findViewById<Button>(R.id.pausaB)
         partitaInPausa = !partitaInPausa
@@ -75,7 +101,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun completaTurno(){
+        //Salva turno precedente
+        precContatoreRettangoliCorretti = countRettangoliPremutiCorrettamente
+        //Resetto Input
         isInputAbilitato = false
+        countRettangoliPremuti = 0
+        countRettangoliPremutiCorrettamente = 0
+        stringaInput = ""
+        val output : TextView = findViewById(R.id.outputTV)
+        output.text = stringaInput
+        //Aumenta difficoltà e avvia nuovo turno
         CoroutineScope(Dispatchers.Main).launch {
             delay(1000)
             simonGame.aumentaDifficolta()
@@ -84,33 +119,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun iniziaTurno(){
-        if (countRettangoliPremuti != 0) precContatoreRettangoliCorretti = countRettangoliPremutiCorrettamente //se ho premuto almeno un elemento che sia giusto o sbagliato mi salvo quelli giusti
-
-        //Resetto input
-        isInputAbilitato = false
-        countRettangoliPremuti = 0
-        countRettangoliPremutiCorrettamente = 0
-
         //Pulsante pausa serve per stoppare (e poi far ripartire) la visione della sequenza
         val pausaB : Button = findViewById(R.id.pausaB)
         pausaB.isEnabled = true
 
-        CoroutineScope(Dispatchers.Main).launch {
+        turnoJob = CoroutineScope(Dispatchers.Main).launch {
 
             //ALLA fine ne genero uno alla volta, sono quelli da visualizzare che crescono
             simonGame.sequenzaCorrente += simonGame.generaCarattere()
 
             for(c in simonGame.sequenzaCorrente){
+
+                //se in pausa aspetta
+                while(partitaInPausa){
+                    delay(100)
+                }
+
                 val view = griglia[c]!!
-                simonGame.evidenziaView(view = view, scope = this)
+                evidenziaView(view = view, scope = this)
                 delay(1000)
             }
 
             pausaB.isEnabled = false
             isInputAbilitato = true
-            stringaInput = ""
-            val output : TextView = findViewById(R.id.outputTV)
-            output.text = stringaInput
         }
     }
 
@@ -176,13 +207,14 @@ class MainActivity : AppCompatActivity() {
 
         pausaB.setOnClickListener {
             togglePausa()
-            //TODO capire come stoppare coroutine e tenere traccia del punto in cui sono nel mostrare la sequenza
         }
 
         finePartitaB.setOnClickListener {
-            //isInputAbilitato = false
-            //salvo partita
-            RegistroPartite.addPartita(countRettangoliPremutiCorrettamente, stringaInput)
+            //Controllo se è primo turno e utente non ha dato input ma è uscito subito
+            val primaSequenza = simonGame.difficoltaSequenza == 1 && countRettangoliPremuti == 0
+            if(!primaSequenza) {
+                RegistroPartite.addPartita(countRettangoliPremutiCorrettamente, stringaInput)
+            }
             //chiamata a seconda schermata
             val intent = Intent(this, Schermata2::class.java)
             startActivity(intent)

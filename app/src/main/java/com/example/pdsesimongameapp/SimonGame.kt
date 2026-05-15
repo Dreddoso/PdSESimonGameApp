@@ -34,15 +34,5 @@ class SimonGame(listaColoriChar : List<Char> = listOf('Y','R','G','B','M','C')) 
         return c == sequenzaCorrente[sequenzaCorrente.length-1]
     }
 
-    //TODO: forse ha piu senso metterlo in mainactivity
-    fun evidenziaView(view: View, scope : CoroutineScope, alpha : Float = 0.4f, durataMs: Long = 150L){
-        scope.launch(Dispatchers.Main){
-            //abbassa alpha
-            view.alpha = alpha
-            delay(durataMs)
-            //ripristina dopo tot tempo
-            view.alpha = 1f
-        }
-    }
 
 }
