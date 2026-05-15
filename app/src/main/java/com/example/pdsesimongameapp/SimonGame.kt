@@ -1,47 +1,47 @@
 package com.example.pdsesimongameapp
 
-import android.widget.Button
+import android.view.View
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+class SimonGame(listaColoriChar : List<Char> = listOf('Y','R','G','B','M','C')) {
 
-//Come funziona una partita?
-//Viene data una sequenza
-
-//Il dispositivo crea una serie di toni e luci e richiede all'utente di ripetere la sequenza.
-//Se l'utente ha successo, la serie diventa progressivamente più lunga e complessa.
-//Quando l'utente fallisce o il limite di tempo scade, il gioco finisce.
-
-class SimonGame {
-
-    var sequenzaCorrente = ""
-    var difficoltaSequenza = 1 //Lunghezza sequenza (Minimo 1)
-
+    val caratteri = listaColoriChar
+    var sequenzaCorrente : String = ""
+    var difficoltaSequenza : Int = 1 //Lunghezza sequenza (Minimo 1)
+    var minDifficoltaSequenza : Int = 1
 
     fun resetPartita(){
         sequenzaCorrente = ""
-        difficoltaSequenza = 1
+        difficoltaSequenza = minDifficoltaSequenza
     }
 
-    //cio nuovo livello +1 su lunghezza sequenza
+    //nuovo livello +1 su lunghezza sequenza
     fun aumentaDifficolta(){
         difficoltaSequenza++
         //la sequenza rimane uguale e genera un nuovo carattere
     }
 
-    fun generaCarattere(){
-
+    //RESTITUISCE UN CARATTERE CASUALE
+    fun generaCarattere(): Char {
+        return caratteri.random()
     }
 
-    fun evidenziaButton(button: Button, scope : CoroutineScope, alpha : Float = 0.4f, durataMs: Long = 150L){
+    fun controllaUltimoCarattere(c : Char) : Boolean{
+        if (sequenzaCorrente.isEmpty()) return false
+        return c == sequenzaCorrente[sequenzaCorrente.length-1]
+    }
+
+    //TODO: forse ha piu senso metterlo in mainactivity
+    fun evidenziaView(view: View, scope : CoroutineScope, alpha : Float = 0.4f, durataMs: Long = 150L){
         scope.launch(Dispatchers.Main){
             //abbassa alpha
-            button.alpha = alpha
+            view.alpha = alpha
             delay(durataMs)
             //ripristina dopo tot tempo
-            button.alpha = 1f
+            view.alpha = 1f
         }
     }
 
