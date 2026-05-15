@@ -15,5 +15,5 @@
     <string name="start">Avvia Partita</string>
     <string name="pause">Pausa</string>
     <string name="resume">Riprendi</string>
-
+    <string name="testo_errore">Hai sbagliato!</string>
 </resources>

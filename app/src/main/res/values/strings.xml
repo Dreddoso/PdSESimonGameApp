@@ -14,5 +14,6 @@
     <string name="start">Start Game</string>
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
+    <string name="testo_errore">You failed!</string>
 
 </resources>
