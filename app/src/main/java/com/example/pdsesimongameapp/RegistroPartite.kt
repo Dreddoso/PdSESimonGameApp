@@ -2,10 +2,9 @@ package com.example.pdsesimongameapp
 
 object RegistroPartite {
     var countPartite : Int = 0
-    val listaPartite = mutableListOf<Partita>()
+    val listaPartite = mutableListOf<SimonGame.SimonGameData>()
     //Partita = ( countRect, sequenza) es = ( 3, RGB)
-    fun addPartita (count : Int, sequenza : String)  {
-        val partita = Partita(countPartite,count, sequenza)
+    fun addPartita (partita: SimonGame.SimonGameData)  {
         listaPartite.add(partita)
         countPartite++
     }

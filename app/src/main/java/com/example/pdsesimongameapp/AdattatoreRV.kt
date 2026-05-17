@@ -1,10 +1,6 @@
 package com.example.pdsesimongameapp
 
 import android.content.Intent
-import android.graphics.Color
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,24 +8,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 
-class AdattatoreRV(private val lista: List<Partita>) : RecyclerView.Adapter<AdattatoreRV.PartitaViewHolder>() {
+class AdattatoreRV(private val lista: List<SimonGame.SimonGameData>) : RecyclerView.Adapter<AdattatoreRV.PartitaViewHolder>() {
                     //al posto di un array come dataset devo usare qualcos'altro
     class PartitaViewHolder(view: View) : RecyclerView.ViewHolder(view){
 
         private val contatoreTV : TextView = view.findViewById(R.id.contatoreTV)
         private val sequenzaTV : TextView = view.findViewById(R.id.sequenzaInputTV)
-                        fun bind(partita: Partita){
-                            contatoreTV.text = partita.contatoreRettangoliPremuti.toString()
-                            //Dovrei modificare direttamente qua il colore della stringa?
-                            val sequenza = partita.sequenza
-                            val spannableString = SpannableString(sequenza)
-                            spannableString.setSpan(
-                                ForegroundColorSpan(Color.RED),
-                                partita.contatoreRettangoliPremuti, //TODO controllare se è corretto partire da questo
-                                sequenza.length,
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                            )
-                            sequenzaTV.text = spannableString
+                        fun bind(partita: SimonGame.SimonGameData){
+                            contatoreTV.text = partita.maxLunghezzaSequenzaCorretta.toString()
+
+                            sequenzaTV.text = partita.getEditString()
                         }
     }
 
@@ -47,9 +35,9 @@ class AdattatoreRV(private val lista: List<Partita>) : RecyclerView.Adapter<Adat
 
             val intent = Intent(context, DettaglioPartita::class.java)
 
-            intent.putExtra("contatore", partita.contatoreRettangoliPremuti)
             intent.putExtra("sequenza", partita.sequenza)
-
+            intent.putExtra("bestscore",partita.maxLunghezzaSequenzaCorretta)
+            intent.putExtra("indice",partita.indexLastCorrectChar)
             context.startActivity(intent)
         }
     }

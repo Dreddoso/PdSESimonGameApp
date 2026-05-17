@@ -1,12 +1,29 @@
 package com.example.pdsesimongameapp
 
-import android.view.View
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import android.graphics.Color
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 
 class SimonGame(listaColoriChar : List<Char> = listOf('Y','R','G','B','M','C')) {
+
+    class SimonGameData(
+        val maxLunghezzaSequenzaCorretta : Int = 0,
+        val sequenza : String = "",
+        val indexLastCorrectChar : Int = 0
+    ){
+
+        fun getEditString() : SpannableString{
+            val spannableString = SpannableString(sequenza)
+            spannableString.setSpan(
+                ForegroundColorSpan(Color.RED),
+                indexLastCorrectChar, //TODO controllare se è corretto partire da questo
+                sequenza.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            return  spannableString
+        }
+    }
 
     val caratteri = listaColoriChar
     var sequenzaCorrente : String = ""
@@ -40,4 +57,7 @@ class SimonGame(listaColoriChar : List<Char> = listOf('Y','R','G','B','M','C')) 
         return c == sequenzaCorrente[index]
     }
 
+    fun creaSalvataggioPartitaCorrente(sequenzaInput : String = "", indice : Int = 0, bestScore : Int = 0) : SimonGameData {
+        return SimonGameData(maxLunghezzaSequenzaCorretta = bestScore, sequenza = sequenzaInput, indexLastCorrectChar = indice)
+    }
 }

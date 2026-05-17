@@ -24,12 +24,14 @@ class DettaglioPartita : AppCompatActivity() {
             insets
         }
 
-        val contatore = intent.getIntExtra("contatore",0)
+        //TODO necessario rendere seryalizable simongamedata per poterla passare per intent con putExtra
+        val contatore = intent.getIntExtra("bestscore",0)
+        val index = intent.getIntExtra("indice",0)
         val sequenza = intent.getStringExtra("sequenza")
         val spannableString = SpannableString(sequenza)
         spannableString.setSpan(
             ForegroundColorSpan(Color.RED),
-            contatore,
+            index,
             sequenza!!.length, //Non dovrebbe essere mai nullo perchè sopra definisco un valore di default 0 in caso non trovasse "contatore"
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
