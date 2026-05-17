@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         evidenziaView(griglia[carattere]!!,CoroutineScope(Dispatchers.Main))
 
 
-        if (!simonGame.controllaUltimoCarattere(carattere)){
+        if (!simonGame.controllaCarattere(carattere,countRettangoliPremuti-1)){
             isGameOver = true
             partitaInCorso = false
             isInputAbilitato = false

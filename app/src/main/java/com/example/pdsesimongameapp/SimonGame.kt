@@ -34,5 +34,10 @@ class SimonGame(listaColoriChar : List<Char> = listOf('Y','R','G','B','M','C')) 
         return c == sequenzaCorrente[sequenzaCorrente.length-1]
     }
 
+    fun controllaCarattere(c: Char, index : Int) : Boolean {
+        if(sequenzaCorrente.isEmpty()) return false
+        if(index >= sequenzaCorrente.length || index < 0) return false
+        return c == sequenzaCorrente[index]
+    }
 
 }
