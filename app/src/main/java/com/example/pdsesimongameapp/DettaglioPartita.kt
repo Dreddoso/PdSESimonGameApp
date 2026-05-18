@@ -1,10 +1,6 @@
 package com.example.pdsesimongameapp
 
-import android.graphics.Color
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -27,17 +23,12 @@ class DettaglioPartita : AppCompatActivity() {
         //TODO necessario rendere seryalizable simongamedata per poterla passare per intent con putExtra
         val contatore = intent.getIntExtra("bestscore",0)
         val index = intent.getIntExtra("indice",0)
-        val sequenza = intent.getStringExtra("sequenza")
-        val spannableString = SpannableString(sequenza)
-        spannableString.setSpan(
-            ForegroundColorSpan(Color.RED),
-            index,
-            sequenza!!.length, //Non dovrebbe essere mai nullo perchè sopra definisco un valore di default 0 in caso non trovasse "contatore"
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
+        val sequenza : String = intent.getStringExtra("sequenza") ?: ""
+
+
         val contatoreTV : TextView = findViewById(R.id.dettagliContatoreTV)
         contatoreTV.text = contatore.toString()
         val sequenzaTV : TextView = findViewById(R.id.dettagliSequenzaTV)
-        sequenzaTV.text = spannableString
+        sequenzaTV.text = EditTextUtilis.getEditString(sequenza,index)
     }
 }
