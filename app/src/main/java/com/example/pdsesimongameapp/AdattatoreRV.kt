@@ -8,8 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 
+
 class AdattatoreRV(private val lista: List<SimonGame.SimonGameData>) : RecyclerView.Adapter<AdattatoreRV.PartitaViewHolder>() {
-                    //al posto di un array come dataset devo usare qualcos'altro
+
+
     class PartitaViewHolder(view: View) : RecyclerView.ViewHolder(view){
 
         private val contatoreTV : TextView = view.findViewById(R.id.contatoreTV)
@@ -17,7 +19,7 @@ class AdattatoreRV(private val lista: List<SimonGame.SimonGameData>) : RecyclerV
                         fun bind(partita: SimonGame.SimonGameData){
                             contatoreTV.text = partita.maxLunghezzaSequenzaCorretta.toString()
 
-                            sequenzaTV.text = partita.getEditString()
+                            sequenzaTV.text = EditTextUtilis.getEditString(partita.sequenza,partita.indexFirstWrongChar)
                         }
     }
 
@@ -37,7 +39,7 @@ class AdattatoreRV(private val lista: List<SimonGame.SimonGameData>) : RecyclerV
 
             intent.putExtra("sequenza", partita.sequenza)
             intent.putExtra("bestscore",partita.maxLunghezzaSequenzaCorretta)
-            intent.putExtra("indice",partita.indexLastCorrectChar)
+            intent.putExtra("indice",partita.indexFirstWrongChar)
             context.startActivity(intent)
         }
     }
