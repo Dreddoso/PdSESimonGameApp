@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
             val pausaButton : Button = findViewById(R.id.pausaB)
             pausaButton.isEnabled = false
             //Salva Partita
-            val salvataggio = simonGame.creaSalvataggioPartitaCorrente(stringaInput,countRettangoliPremutiTurno,simonGame.difficoltaSequenza-1)
+            val salvataggio = simonGame.creaSalvataggioPartitaCorrente(simonGame.sequenzaCorrente,countRettangoliPremutiTurno,simonGame.difficoltaSequenza-1)
             RegistroPartite.addPartita(salvataggio)
             //reset
             stringaInput = ""
@@ -165,6 +165,8 @@ class MainActivity : AppCompatActivity() {
         outState.putBoolean("PARTITA_IN_CORSO",partitaInCorso)
         outState.putInt("CONTATORE_CORRECT_RECT",countRettangoliPremutiCorrettamente)
         outState.putInt("CONTATORE_TURNO_PRECEDENTE", precContatoreRettangoliCorretti)
+        outState.putString("SEQUENZA_CORRENTE_PARTITA", simonGame.sequenzaCorrente)
+        outState.putInt("DIFFICOLTA_CORRENTE_PARTITA", simonGame.difficoltaSequenza)
     }
 
     //è necessario? o lascio come è stato lasciato dalla partita precedente la ui
@@ -201,6 +203,9 @@ class MainActivity : AppCompatActivity() {
             partitaInCorso = savedInstanceState.getBoolean("PARTITA_IN_CORSO", false)
             countRettangoliPremutiCorrettamente = savedInstanceState.getInt("CONTATORE_CORRECT_RECT", 0)
             precContatoreRettangoliCorretti = savedInstanceState.getInt("CONTATORE_TURNO_PRECEDENTE",0)
+            simonGame.sequenzaCorrente = savedInstanceState.getString("SEQUENZA_CORRENTE_PARTITA","")
+            simonGame.difficoltaSequenza = savedInstanceState.getInt("DIFFICOLTA_CORRENTE_PARTITA",simonGame.minDifficoltaSequenza)
+
             //aggiorno il testo della textview
             outputTV.text = stringaInput
         }
