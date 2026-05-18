@@ -16,6 +16,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+
+/**TODO: controllare se bestscore scelto va bene => Max sequenza dell'ultimo turno o max sequenza dell'intera partita?
+ *       Perche se fosse max sequenza dell'intera partita in qualsiasi momento fa un errore la sequenza piu lunga è sempre quella del turno precedente
+ *      in quanto anche se sbaglia nel turno corrente l'ultimo carattere,la sequenza piu lunga sara pari alla difficolta del turno precedente
+ *       ovvero la difficolta della sequenza corrente -1 (quindi dovrebbe essere corretto cosi
+ **/
+
 class MainActivity : AppCompatActivity() {
     //Componenti UI
     lateinit var griglia : Map<Char, TextView>
