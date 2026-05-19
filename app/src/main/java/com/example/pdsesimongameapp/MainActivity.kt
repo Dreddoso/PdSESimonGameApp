@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -59,9 +60,9 @@ class MainActivity : AppCompatActivity() {
         stringaInput += carattere
         outputTextView.text = stringaInput
         countRettangoliPremutiTurno += 1
-        evidenziaView(griglia[carattere]!!,CoroutineScope(Dispatchers.Main))
-
-
+        lifecycleScope.launch {
+            evidenziaView(griglia[carattere]!!)
+        }
         if (!simonGame.controllaCarattere(carattere,countRettangoliPremutiTurno-1)){
             isGameOver = true
             partitaInCorso = false
@@ -96,16 +97,12 @@ class MainActivity : AppCompatActivity() {
        return isInputAbilitato
     }
 
-    /*TODO meglio togliere la creazione di un altra coroutine e quindi togliere scope, e rendere la fun -> suspend fun ??
-            quindi stesso codice senza launch*/
-    fun evidenziaView(view: View, scope : CoroutineScope, alpha : Float = 0.4f, durataMs: Long = 150L){
-        scope.launch(Dispatchers.Main){
-            //abbassa alpha
-            view.alpha = alpha
-            delay(durataMs)
-            //ripristina dopo tot tempo
-            view.alpha = 1f
-        }
+    suspend fun evidenziaView(view: View, alpha : Float = 0.4f, durataMs: Long = 150L){
+        //abbassa alpha
+        view.alpha = alpha
+        delay(durataMs)
+        //ripristina dopo tot tempo
+        view.alpha = 1f
     }
 
     fun togglePausa(){
@@ -154,7 +151,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 val view = griglia[c]!!
-                evidenziaView(view = view, scope = this)
+                evidenziaView(view = view)
                 delay(1000)
             }
 
@@ -237,7 +234,7 @@ class MainActivity : AppCompatActivity() {
             val primaSequenza = simonGame.difficoltaSequenza == 1 && countRettangoliPremutiTurno == 0
             if(!primaSequenza) {
                 //Salva partita
-                val salvataggio = simonGame.creaSalvataggioPartitaCorrente(stringaInput,countRettangoliPremutiTurno,simonGame.difficoltaSequenza-1)
+                val salvataggio = simonGame.creaSalvataggioPartitaCorrente(simonGame.sequenzaCorrente,countRettangoliPremutiTurno,simonGame.difficoltaSequenza-1)
                 RegistroPartite.addPartita(salvataggio)
             }
 
