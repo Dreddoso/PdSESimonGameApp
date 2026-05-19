@@ -9,6 +9,13 @@ import androidx.core.view.WindowInsetsCompat
 
 class DettaglioPartita : AppCompatActivity() {
 
+    //Salvo lo stato (forse inutile dato che logica semplice utilizza extras dell'intent e in teoria viene riutilizzato
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("bestscore", intent.getIntExtra("bestscore",0))
+        outState.putInt("indice",intent.getIntExtra("indice",0))
+        outState.putString("sequenza",intent.getStringExtra("sequenza"))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,9 +28,9 @@ class DettaglioPartita : AppCompatActivity() {
         }
 
         //TODO necessario rendere seryalizable simongamedata per poterla passare per intent con putExtra
-        val contatore = intent.getIntExtra("bestscore",0)
-        val index = intent.getIntExtra("indice",0)
-        val sequenza : String = intent.getStringExtra("sequenza") ?: ""
+        val contatore = savedInstanceState?.getInt("bestscore") ?: intent.getIntExtra("bestscore",0)
+        val index = savedInstanceState?.getInt("indice") ?: intent.getIntExtra("indice",0)
+        val sequenza : String = savedInstanceState?.getString("sequenza") ?: intent.getStringExtra("sequenza") ?: ""
 
 
         val contatoreTV : TextView = findViewById(R.id.dettagliContatoreTV)
