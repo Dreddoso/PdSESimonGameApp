@@ -76,7 +76,8 @@ class MainActivity : AppCompatActivity() {
     fun ripristinaStatoPartita(){
         //In base a statoPartita dovrei o non fare niente (Idle -> non aveva ancora cominciato a giocare)
         when(statoPartita){
-            StatoPartita.TURNO_COMPUTER -> iniziaTurno()
+            StatoPartita.TURNO_COMPUTER -> riprendiTurno()
+            StatoPartita.PAUSA -> riprendiTurno()
             else -> aggiornaUIStato()
         }
     }
@@ -146,7 +147,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    suspend fun evidenziaView(view: View, alpha : Float = 0.4f, durataMs: Long = 150L){
+    suspend fun evidenziaView(view: View, alpha : Float = 0.4f, durataMs: Long = 450L){
         if(!view.isAttachedToWindow) return //Basta questo controllo?
         //abbassa alpha
         view.alpha = alpha
@@ -184,7 +185,7 @@ class MainActivity : AppCompatActivity() {
         simonGame.resetPartita()
         resetDatiGioco()
         //Avvio turno
-        iniziaTurno()
+        iniziaNuovoTurno()
     }
 
     fun iniziaNuovoTurno(){
@@ -208,16 +209,14 @@ class MainActivity : AppCompatActivity() {
             evidenziaView(griglia[carattere]!!) //TODO: rischio? !!
         }
         stringaInput += carattere
+        findViewById<TextView>(R.id.outputTV).text = stringaInput //Invece di chiamare metodo aggiornaUIStato()
         countRettangoliPremutiTurno += 1
-        aggiornaUIStato()
-
         //Controllo dinamico dell'input
         if (!simonGame.controllaCarattere(carattere,countRettangoliPremutiTurno-1)){
             //ERRORE -> PARTITA TERMINA
             //  CAMBIO FLAG, MESSAGGIO DI ERRORE, DISATTIVO BUTTON
             statoPartita = StatoPartita.GAME_OVER
             Toast.makeText(this, resources.getString(R.string.testo_errore),Toast.LENGTH_SHORT).show()
-            aggiornaUIStato()
             return
         }
         //Nessun errore
@@ -230,15 +229,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun completaTurno(){
-        //Resetto variabili del turno e sistemo
-        countRettangoliPremutiTurno = 0
-        countRettangoliPremutiCorrettamente = 0
-        //Aumenta difficoltà e avvia nuovo turno
-        simonGame.aumentaDifficolta()
-        iniziaTurno()
+        statoPartita = StatoPartita.TURNO_COMPUTER //per bloccare input utente
+        turnoJob?.cancel()
+        lifecycleScope.launch {
+            delay(800)
+            //Resetto variabili del turno e sistemo
+            countRettangoliPremutiTurno = 0
+            countRettangoliPremutiCorrettamente = 0
+            //Aumenta difficoltà e avvia nuovo turno
+            simonGame.aumentaDifficolta()
+            iniziaNuovoTurno()
+        }
     }
 
     fun finePartita(){
+        statoPartita = StatoPartita.FINE_PARTITA
         //Controllo se è primo turno e utente non ha dato input ma è uscito subito
         val primaSequenza = simonGame.difficoltaSequenza == 1 && countRettangoliPremutiTurno == 0
         if(!primaSequenza) {
@@ -248,7 +253,6 @@ class MainActivity : AppCompatActivity() {
         }
         turnoJob?.cancel()
         resetDatiGioco()
-        aggiornaUIStato()
     }
 
     override fun onSaveInstanceState(outState: Bundle){
@@ -260,15 +264,6 @@ class MainActivity : AppCompatActivity() {
         outState.putInt("DIFFICOLTA_CORRENTE_PARTITA", simonGame.difficoltaSequenza)
         outState.putString("STATO_PARTITA",statoPartita.name)
         outState.putInt("RIPRODUZIONE_INDICE", riproduzioneIndice)
-    }
-
-    //è necessario? o lascio come è stato lasciato dalla partita precedente la ui
-    //                  mentre il cervello/gioco dietro è stato resettato
-    override fun onResume() {
-        super.onResume()
-        val outputTV = findViewById<TextView>(R.id.outputTV)
-        outputTV.text = stringaInput
-        aggiornaUIStato()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -330,7 +325,7 @@ class MainActivity : AppCompatActivity() {
                 )
                 RegistroPartite.addPartita(salvataggio)
             }else{
-                //SI Comporta come fine partita
+                //Si comporta come fine partita
                 finePartita()
             }
             resetDatiGioco()
@@ -351,6 +346,5 @@ class MainActivity : AppCompatActivity() {
                 aggiungiInput(char)
             }
         }
-        aggiornaUIStato()
     }
 }
