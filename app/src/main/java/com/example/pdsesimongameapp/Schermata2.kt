@@ -16,6 +16,7 @@ class Schermata2 : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        adattatoreRV.aggiornaLista(RegistroPartite.listaPartite)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

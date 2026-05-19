@@ -9,8 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 
-class AdattatoreRV(private val lista: List<SimonGame.SimonGameData>) : RecyclerView.Adapter<AdattatoreRV.PartitaViewHolder>() {
+class AdattatoreRV(private val lista: MutableList<SimonGame.SimonGameData>) : RecyclerView.Adapter<AdattatoreRV.PartitaViewHolder>() {
 
+    fun aggiornaLista(list: List<SimonGame.SimonGameData>){
+        lista.union(list)
+    }
 
     class PartitaViewHolder(view: View) : RecyclerView.ViewHolder(view){
 
