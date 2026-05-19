@@ -47,7 +47,9 @@ class MainActivity : AppCompatActivity() {
     var statoPartita = StatoPartita.IDLE
         set(value) {  //In questo modo ogni cambio di stato aggiorna automaticamente la UI
             field = value
-            aggiornaUIStato()
+            if(::griglia.isInitialized){ // :: operatore di riferimento ("puntatore" sicuro)
+                aggiornaUIStato()
+            }
         }
 
     //Input
