@@ -23,6 +23,17 @@ import kotlinx.coroutines.launch
  *       ovvero la difficolta della sequenza corrente -1 (quindi dovrebbe essere corretto cosi
  **/
 
+
+//REFACTORING AL POSTO DI BOOLEAN SPARSI E CHE SOVRAPPONGONO LOGICA un enum STATOPARTITA (tipo state machine)
+enum class StatoPartita{
+    IDLE, //nessuna partita iniziata
+    TURNO_COMPUTER, //computer mostra la sequenza
+    TURNO_PLAYER, //giocatore inserisce input
+    PAUSA, //pausa durante turno computer
+    FINE_TURNO, //turn player finito (stato intermedio tra turno player e turno computer
+    GAME_OVER //errore del giocatore
+}
+
 class MainActivity : AppCompatActivity() {
     //Componenti UI
     lateinit var griglia : Map<Char, TextView>
@@ -34,11 +45,12 @@ class MainActivity : AppCompatActivity() {
     //JOB per gestire la pausa durante visualizzazione della sequenza
     var turnoJob : Job? = null
 
-    //FLAG di Stato del Gioco
-    var isInputAbilitato : Boolean = false
-    var partitaInPausa : Boolean = false
-    var partitaInCorso : Boolean = false
-    var isGameOver : Boolean = false
+    //STATO DELLA PARTITA
+    var statoPartita = StatoPartita.IDLE
+        set(value) {  //In questo modo ogni cambio di stato aggiorna automaticamente la UI
+            field = value
+            aggiornaUIStato()
+        }
 
     //Input
     var stringaInput = ""
@@ -65,14 +77,8 @@ class MainActivity : AppCompatActivity() {
         }
         if (!simonGame.controllaCarattere(carattere,countRettangoliPremutiTurno-1)){
             //PARTITA TERMINA CAMBIO FLAG, MESSAGGIO DI ERRORE, DISATTIVO BUTTON
-            isGameOver = true
-            partitaInCorso = false
-            isInputAbilitato = false
+            statoPartita = StatoPartita.GAME_OVER
             Toast.makeText(this, resources.getString(R.string.testo_errore),Toast.LENGTH_SHORT).show()
-            val finePartitaButton : Button = findViewById(R.id.finePartitaB)
-            finePartitaButton.isEnabled = false
-            val pausaButton : Button = findViewById(R.id.pausaB)
-            pausaButton.isEnabled = false
             return
         }
 
@@ -84,9 +90,54 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun aggiornaUIStato(){
+        val avviaB = findViewById<Button>(R.id.avviaB)
+        val pausaB = findViewById<Button>(R.id.pausaB)
+        val finePartitaB = findViewById<Button>(R.id.finePartitaB)
+
+        when (statoPartita){
+            StatoPartita.IDLE -> {
+                avviaB.isEnabled = true
+                pausaB.isEnabled = false
+                finePartitaB.isEnabled = false
+            }
+
+            StatoPartita.TURNO_COMPUTER -> {
+                avviaB.isEnabled = false
+                pausaB.isEnabled = true
+                finePartitaB.isEnabled = true
+            }
+
+            StatoPartita.TURNO_PLAYER -> {
+                avviaB.isEnabled = false
+                pausaB.isEnabled = false
+                finePartitaB.isEnabled = true
+            }
+
+            StatoPartita.PAUSA -> {
+                avviaB.isEnabled = false
+                pausaB.isEnabled = true
+                finePartitaB.isEnabled = true
+            }
+
+            StatoPartita.GAME_OVER -> {
+                avviaB.isEnabled = false
+                pausaB.isEnabled = false
+                finePartitaB.isEnabled = false
+            }
+
+            StatoPartita.FINE_TURNO -> {
+                avviaB.isEnabled = false
+                pausaB.isEnabled = false
+                finePartitaB.isEnabled = false
+            }
+
+        }
+    }
+
     //Controllo per input utente (utile o rindondante?)
     fun isInputGrigliaAbilitato() : Boolean {
-       return isInputAbilitato
+       return statoPartita == StatoPartita.TURNO_PLAYER
     }
 
     suspend fun evidenziaView(view: View, alpha : Float = 0.4f, durataMs: Long = 150L){
@@ -99,19 +150,19 @@ class MainActivity : AppCompatActivity() {
 
     fun togglePausa(){
         val pausaB = findViewById<Button>(R.id.pausaB)
-        partitaInPausa = !partitaInPausa
-        if (partitaInPausa){
-            pausaB.text = resources.getString(R.string.resume)
+        if (statoPartita == StatoPartita.PAUSA){
+            pausaB.text = getString(R.string.pause)
+            statoPartita = StatoPartita.TURNO_COMPUTER
         }else{
-            pausaB.text = resources.getString(R.string.pause)
+            pausaB.text = getString(R.string.resume)
+            statoPartita = StatoPartita.PAUSA
         }
     }
 
     fun completaTurno(){
         //Salva turno precedente
         precContatoreRettangoliCorretti = countRettangoliPremutiCorrettamente
-        //Resetto Input
-        isInputAbilitato = false
+        statoPartita = StatoPartita.FINE_TURNO
         countRettangoliPremutiTurno = 0
         countRettangoliPremutiCorrettamente = 0
         stringaInput = ""
@@ -133,9 +184,9 @@ class MainActivity : AppCompatActivity() {
             val salvataggio = simonGame.creaSalvataggioPartitaCorrente(simonGame.sequenzaCorrente,countRettangoliPremutiTurno,simonGame.difficoltaSequenza-1)
             RegistroPartite.addPartita(salvataggio)
         }
-        resetDatiGioco()
-        partitaInCorso = false
+        statoPartita = StatoPartita.GAME_OVER
         turnoJob?.cancel()
+        resetDatiGioco()
     }
 
     fun resetDatiGioco(){
@@ -144,18 +195,14 @@ class MainActivity : AppCompatActivity() {
         countRettangoliPremutiTurno = 0
         countRettangoliPremutiCorrettamente = 0
         precContatoreRettangoliCorretti = 0
-        isGameOver = false
-        partitaInCorso = false
-        partitaInPausa = false
-        isInputAbilitato = false
         countRettangoliPremutiPartita = 0
         simonGame.resetPartita()
     }
 
     fun iniziaTurno(){
-        //Pulsante pausa serve per stoppare (e poi far ripartire) la visione della sequenza
-        val pausaB : Button = findViewById(R.id.pausaB)
-        pausaB.isEnabled = true
+
+        statoPartita = StatoPartita.TURNO_COMPUTER
+
 
         turnoJob = lifecycleScope.launch {
 
@@ -165,7 +212,7 @@ class MainActivity : AppCompatActivity() {
             for(c in simonGame.sequenzaCorrente){
 
                 //se in pausa aspetta
-                while(partitaInPausa){
+                while(statoPartita == StatoPartita.PAUSA){
                     delay(100)
                 }
 
@@ -174,23 +221,19 @@ class MainActivity : AppCompatActivity() {
                 delay(1000)
             }
 
-            pausaB.isEnabled = false
-            isInputAbilitato = true
+            statoPartita = StatoPartita.TURNO_PLAYER
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle){
         super.onSaveInstanceState(outState)
         outState.putString("STRINGA_INPUT", stringaInput)
-        outState.putBoolean("INPUT_ABILITATO", isInputAbilitato)
         outState.putInt("CONTATORE_RECT", countRettangoliPremutiTurno)
-        outState.putBoolean("PARTITA_IN_PAUSA",partitaInPausa)
-        outState.putBoolean("PARTITA_IN_CORSO",partitaInCorso)
         outState.putInt("CONTATORE_CORRECT_RECT",countRettangoliPremutiCorrettamente)
         outState.putInt("CONTATORE_TURNO_PRECEDENTE", precContatoreRettangoliCorretti)
         outState.putString("SEQUENZA_CORRENTE_PARTITA", simonGame.sequenzaCorrente)
         outState.putInt("DIFFICOLTA_CORRENTE_PARTITA", simonGame.difficoltaSequenza)
-        outState.putBoolean("IS_GAME_OVER",isGameOver)
+        outState.putString("STATO_PARTITA",statoPartita.name)
     }
 
     //è necessario? o lascio come è stato lasciato dalla partita precedente la ui
@@ -221,26 +264,20 @@ class MainActivity : AppCompatActivity() {
         //controllo se esiste un stato precedente
         if (savedInstanceState != null) {
             stringaInput = savedInstanceState.getString("STRINGA_INPUT","")
-            isInputAbilitato = savedInstanceState.getBoolean("INPUT_ABILITATO",false)
             countRettangoliPremutiTurno = savedInstanceState.getInt("CONTATORE_RECT", 0)
-            partitaInPausa = savedInstanceState.getBoolean("PARTITA_IN_PAUSA",false)
-            partitaInCorso = savedInstanceState.getBoolean("PARTITA_IN_CORSO", false)
             countRettangoliPremutiCorrettamente = savedInstanceState.getInt("CONTATORE_CORRECT_RECT", 0)
             precContatoreRettangoliCorretti = savedInstanceState.getInt("CONTATORE_TURNO_PRECEDENTE",0)
             simonGame.sequenzaCorrente = savedInstanceState.getString("SEQUENZA_CORRENTE_PARTITA","")
             simonGame.difficoltaSequenza = savedInstanceState.getInt("DIFFICOLTA_CORRENTE_PARTITA",simonGame.minDifficoltaSequenza)
-            isGameOver = savedInstanceState.getBoolean("IS_GAME_OVER",false)
+            val statoString = savedInstanceState.getString("STATO_PARTITA")
+            statoPartita = statoString?.let {
+                StatoPartita.valueOf(it)
+            } ?: StatoPartita.IDLE
             //aggiorno il testo della textview
             outputTV.text = stringaInput
-            //
         }
 
         avviaB.setOnClickListener {
-            partitaInCorso = true
-            //Disattiva Button
-            avviaB.isEnabled = false
-            //Attiva button fine partita
-            finePartitaB.isEnabled = true
 
             //Avvia partita
             iniziaTurno()
@@ -258,7 +295,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         onBackPressedDispatcher.addCallback(this){
-            if (isGameOver && !partitaInCorso) {
+            if (statoPartita == StatoPartita.GAME_OVER) {
                 //Salva Partita
                 val salvataggio = simonGame.creaSalvataggioPartitaCorrente(
                     simonGame.sequenzaCorrente,
