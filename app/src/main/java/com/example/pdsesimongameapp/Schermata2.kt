@@ -14,6 +14,10 @@ class Schermata2 : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adattatoreRV : AdattatoreRV
 
+    override fun onResume() {
+        super.onResume()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
