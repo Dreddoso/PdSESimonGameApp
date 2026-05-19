@@ -30,7 +30,6 @@ enum class StatoPartita{
     TURNO_COMPUTER, //computer mostra la sequenza
     TURNO_PLAYER, //giocatore inserisce input
     PAUSA, //pausa durante turno computer
-    FINE_TURNO, //turn player finito (stato intermedio tra turno player e turno computer
     GAME_OVER //errore del giocatore
 }
 
@@ -106,6 +105,7 @@ class MainActivity : AppCompatActivity() {
                 avviaB.isEnabled = false
                 pausaB.isEnabled = true
                 finePartitaB.isEnabled = true
+                pausaB.text = getString(R.string.pause)
             }
 
             StatoPartita.TURNO_PLAYER -> {
@@ -118,15 +118,10 @@ class MainActivity : AppCompatActivity() {
                 avviaB.isEnabled = false
                 pausaB.isEnabled = true
                 finePartitaB.isEnabled = true
+                pausaB.text = getString(R.string.resume)
             }
 
             StatoPartita.GAME_OVER -> {
-                avviaB.isEnabled = false
-                pausaB.isEnabled = false
-                finePartitaB.isEnabled = false
-            }
-
-            StatoPartita.FINE_TURNO -> {
                 avviaB.isEnabled = false
                 pausaB.isEnabled = false
                 finePartitaB.isEnabled = false
@@ -162,7 +157,6 @@ class MainActivity : AppCompatActivity() {
     fun completaTurno(){
         //Salva turno precedente
         precContatoreRettangoliCorretti = countRettangoliPremutiCorrettamente
-        statoPartita = StatoPartita.FINE_TURNO
         countRettangoliPremutiTurno = 0
         countRettangoliPremutiCorrettamente = 0
         stringaInput = ""
@@ -170,6 +164,7 @@ class MainActivity : AppCompatActivity() {
         output.text = stringaInput
         //Aumenta difficoltà e avvia nuovo turno
         lifecycleScope.launch {
+            statoPartita = StatoPartita.TURNO_COMPUTER
             delay(500)
             simonGame.aumentaDifficolta()
             iniziaTurno()
@@ -184,7 +179,6 @@ class MainActivity : AppCompatActivity() {
             val salvataggio = simonGame.creaSalvataggioPartitaCorrente(simonGame.sequenzaCorrente,countRettangoliPremutiTurno,simonGame.difficoltaSequenza-1)
             RegistroPartite.addPartita(salvataggio)
         }
-        statoPartita = StatoPartita.GAME_OVER
         turnoJob?.cancel()
         resetDatiGioco()
     }
@@ -209,6 +203,7 @@ class MainActivity : AppCompatActivity() {
             //ALLA fine ne genero uno alla volta, sono quelli da visualizzare che crescono
             simonGame.sequenzaCorrente += simonGame.generaCarattere()
 
+            delay(500)
             for(c in simonGame.sequenzaCorrente){
 
                 //se in pausa aspetta
@@ -303,11 +298,12 @@ class MainActivity : AppCompatActivity() {
                     simonGame.difficoltaSequenza - 1
                 )
                 RegistroPartite.addPartita(salvataggio)
-                resetDatiGioco()
             }else{
                 //SI Comporta come fine partita
                 finePartita()
             }
+            resetDatiGioco()
+            finish()
         }
 
         griglia = mapOf<Char,TextView>(
