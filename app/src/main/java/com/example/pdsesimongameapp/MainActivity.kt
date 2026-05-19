@@ -164,30 +164,16 @@ class MainActivity : AppCompatActivity() {
         iniziaTurno()
     }
 
-    fun iniziaTurno(){
-
+    fun iniziaNuovoTurno(){
         statoPartita = StatoPartita.TURNO_COMPUTER
-        //Controllo che non stia riprendendo un turno invece di iniziarne uno nuovo
-        if(riproduzioneIndice <= 0){
-            //Genera nuovo carattere sequenza
-            simonGame.sequenzaCorrente += simonGame.generaCarattere()
-        }
+        simonGame.sequenzaCorrente += simonGame.generaCarattere()
+        riproduzioneIndice = 0
+        riproduciSequenza()
+    }
 
-        turnoJob = lifecycleScope.launch {
-
-            while(riproduzioneIndice < simonGame.sequenzaCorrente.length){
-                while(statoPartita == StatoPartita.PAUSA){
-                    delay(100)
-                }
-                //TODO: controllare rischio di uso operatore !! per forzare a essere non-null
-                val view = griglia[simonGame.sequenzaCorrente[riproduzioneIndice]]!!
-                evidenziaView(view = view)
-                delay(1000)
-                riproduzioneIndice += 1
-            }
-            riproduzioneIndice = 0
-            statoPartita = StatoPartita.TURNO_PLAYER
-        }
+    fun riprendiTurno(){
+        statoPartita = StatoPartita.TURNO_COMPUTER
+        riproduciSequenza()
     }
 
     fun aggiungiInput(carattere: Char){
