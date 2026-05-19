@@ -43,7 +43,6 @@ class MainActivity : AppCompatActivity() {
     //JOB per gestire la pausa durante visualizzazione della sequenza
     var turnoJob : Job? = null
     var riproduzioneIndice = 0
-
     //STATO DELLA PARTITA
     var statoPartita = StatoPartita.IDLE
         set(value) {  //In questo modo ogni cambio di stato aggiorna automaticamente la UI
@@ -52,7 +51,6 @@ class MainActivity : AppCompatActivity() {
                 aggiornaUIStato()
             }
         }
-
     //Input
     var stringaInput = ""
     //Contatori del turno
@@ -346,5 +344,7 @@ class MainActivity : AppCompatActivity() {
                 aggiungiInput(char)
             }
         }
+        //Refresh iniziale (necessario?)
+        aggiornaUIStato()
     }
 }
