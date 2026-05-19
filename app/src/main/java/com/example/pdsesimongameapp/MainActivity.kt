@@ -30,7 +30,8 @@ enum class StatoPartita{
     TURNO_COMPUTER, //computer mostra la sequenza
     TURNO_PLAYER, //giocatore inserisce input
     PAUSA, //pausa durante turno computer
-    GAME_OVER //errore del giocatore
+    GAME_OVER, //errore del giocatore
+    FINE_PARTITA //Terminazione volontaria della partita
 }
 
 //TODO: refactoring -> spostare la logica per stato e ripristino UI in una viewmodel ??
@@ -132,6 +133,13 @@ class MainActivity : AppCompatActivity() {
                 pausaB.isEnabled = false
                 finePartitaB.isEnabled = false
                 //Bloccare le visualizzazioni ?
+                turnoJob?.cancel()
+            }
+
+            StatoPartita.FINE_PARTITA -> {
+                avviaB.isEnabled = false
+                pausaB.isEnabled = false
+                finePartitaB.isEnabled = false
                 turnoJob?.cancel()
             }
 
