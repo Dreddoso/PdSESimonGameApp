@@ -82,10 +82,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun ripristinaStatoPartita(){
+        turnoJob?.cancel()
         //In base a statoPartita dovrei o non fare niente (Idle -> non aveva ancora cominciato a giocare)
         when(statoPartita){
             StatoPartita.TURNO_COMPUTER -> riprendiTurno()
-            StatoPartita.PAUSA -> riprendiTurno(true)
+            StatoPartita.PAUSA -> riprendiTurno()
+            StatoPartita.FINE_PARTITA -> disattivaInput()
             else -> aggiornaUIStato()
         }
     }
@@ -210,10 +212,8 @@ class MainActivity : AppCompatActivity() {
         riproduciSequenza()
     }
 
-    fun riprendiTurno(mantieniPausa: Boolean = false){
-        if (!mantieniPausa){
-            statoPartita = StatoPartita.TURNO_COMPUTER
-        }
+    fun riprendiTurno(){
+        statoPartita = StatoPartita.TURNO_COMPUTER
         riproduciSequenza()
     }
 
@@ -233,12 +233,13 @@ class MainActivity : AppCompatActivity() {
             //ERRORE -> PARTITA TERMINA
             //  CAMBIO FLAG, MESSAGGIO DI ERRORE, DISATTIVO BUTTON
             statoPartita = StatoPartita.GAME_OVER
+            disattivaInput()
             Toast.makeText(this, resources.getString(R.string.testo_errore),Toast.LENGTH_SHORT).show()
             return
         }
         //Nessun errore
         //Controllo se ha inserito tutto
-        if(stringaInput.length == simonGame.difficoltaSequenza){
+        if(stringaInput.length == simonGame.sequenzaCorrente.length){
             completaTurno()
         }
     }
@@ -314,7 +315,7 @@ class MainActivity : AppCompatActivity() {
                 //Salva Partita
                 val salvataggio = simonGame.creaSalvataggioPartitaCorrente(
                     simonGame.sequenzaCorrente,
-                    countRettangoliPremutiTurno,
+                    countRettangoliPremutiTurno-1,
                     simonGame.difficoltaSequenza - 1
                 )
                 RegistroPartite.addPartita(salvataggio)
@@ -322,7 +323,6 @@ class MainActivity : AppCompatActivity() {
                 //Si comporta come fine partita
                 finePartita()
             }
-            resetDatiGioco()
             finish()
         }
 
