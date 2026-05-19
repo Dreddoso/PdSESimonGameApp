@@ -155,6 +155,29 @@ class MainActivity : AppCompatActivity() {
         view.alpha = 1f
     }
 
+    fun riproduciSequenza(){
+        if (statoPartita != StatoPartita.TURNO_COMPUTER) return
+
+        turnoJob?.cancel()
+
+        turnoJob = lifecycleScope.launch {
+            delay(700)
+
+            while(riproduzioneIndice < simonGame.sequenzaCorrente.length){
+                while (statoPartita == StatoPartita.PAUSA){
+                    delay(100)
+                }
+
+                val view = griglia[simonGame.sequenzaCorrente[riproduzioneIndice]]!!
+                evidenziaView(view = view)
+                delay(250)
+                riproduzioneIndice += 1
+            }
+            riproduzioneIndice = 0
+            delay(300)
+            statoPartita == StatoPartita.TURNO_PLAYER
+        }
+    }
 
     fun iniziaPartita(){
         //Reset
