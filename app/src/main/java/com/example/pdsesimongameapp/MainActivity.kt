@@ -6,13 +6,12 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -60,10 +59,12 @@ class MainActivity : AppCompatActivity() {
         stringaInput += carattere
         outputTextView.text = stringaInput
         countRettangoliPremutiTurno += 1
+
         lifecycleScope.launch {
             evidenziaView(griglia[carattere]!!)
         }
         if (!simonGame.controllaCarattere(carattere,countRettangoliPremutiTurno-1)){
+            //PARTITA TERMINA CAMBIO FLAG, MESSAGGIO DI ERRORE, DISATTIVO BUTTON
             isGameOver = true
             partitaInCorso = false
             isInputAbilitato = false
@@ -72,15 +73,6 @@ class MainActivity : AppCompatActivity() {
             finePartitaButton.isEnabled = false
             val pausaButton : Button = findViewById(R.id.pausaB)
             pausaButton.isEnabled = false
-            //Salva Partita
-            val salvataggio = simonGame.creaSalvataggioPartitaCorrente(simonGame.sequenzaCorrente,countRettangoliPremutiTurno,simonGame.difficoltaSequenza-1)
-            RegistroPartite.addPartita(salvataggio)
-            //reset
-            stringaInput = ""
-            countRettangoliPremutiTurno = 0
-            countRettangoliPremutiCorrettamente = 0
-            precContatoreRettangoliCorretti = 0
-            simonGame.resetPartita()
             return
         }
 
@@ -126,11 +118,38 @@ class MainActivity : AppCompatActivity() {
         val output : TextView = findViewById(R.id.outputTV)
         output.text = stringaInput
         //Aumenta difficoltà e avvia nuovo turno
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(1000)
+        lifecycleScope.launch {
+            delay(500)
             simonGame.aumentaDifficolta()
             iniziaTurno()
         }
+    }
+
+    fun finePartita(){
+        //Controllo se è primo turno e utente non ha dato input ma è uscito subito
+        val primaSequenza = simonGame.difficoltaSequenza == 1 && countRettangoliPremutiTurno == 0
+        if(!primaSequenza) {
+            //Salva partita
+            val salvataggio = simonGame.creaSalvataggioPartitaCorrente(simonGame.sequenzaCorrente,countRettangoliPremutiTurno,simonGame.difficoltaSequenza-1)
+            RegistroPartite.addPartita(salvataggio)
+        }
+        resetDatiGioco()
+        partitaInCorso = false
+        turnoJob?.cancel()
+    }
+
+    fun resetDatiGioco(){
+        //reset
+        stringaInput = ""
+        countRettangoliPremutiTurno = 0
+        countRettangoliPremutiCorrettamente = 0
+        precContatoreRettangoliCorretti = 0
+        isGameOver = false
+        partitaInCorso = false
+        partitaInPausa = false
+        isInputAbilitato = false
+        countRettangoliPremutiPartita = 0
+        simonGame.resetPartita()
     }
 
     fun iniziaTurno(){
@@ -138,7 +157,7 @@ class MainActivity : AppCompatActivity() {
         val pausaB : Button = findViewById(R.id.pausaB)
         pausaB.isEnabled = true
 
-        turnoJob = CoroutineScope(Dispatchers.Main).launch {
+        turnoJob = lifecycleScope.launch {
 
             //ALLA fine ne genero uno alla volta, sono quelli da visualizzare che crescono
             simonGame.sequenzaCorrente += simonGame.generaCarattere()
@@ -171,6 +190,7 @@ class MainActivity : AppCompatActivity() {
         outState.putInt("CONTATORE_TURNO_PRECEDENTE", precContatoreRettangoliCorretti)
         outState.putString("SEQUENZA_CORRENTE_PARTITA", simonGame.sequenzaCorrente)
         outState.putInt("DIFFICOLTA_CORRENTE_PARTITA", simonGame.difficoltaSequenza)
+        outState.putBoolean("IS_GAME_OVER",isGameOver)
     }
 
     //è necessario? o lascio come è stato lasciato dalla partita precedente la ui
@@ -209,9 +229,10 @@ class MainActivity : AppCompatActivity() {
             precContatoreRettangoliCorretti = savedInstanceState.getInt("CONTATORE_TURNO_PRECEDENTE",0)
             simonGame.sequenzaCorrente = savedInstanceState.getString("SEQUENZA_CORRENTE_PARTITA","")
             simonGame.difficoltaSequenza = savedInstanceState.getInt("DIFFICOLTA_CORRENTE_PARTITA",simonGame.minDifficoltaSequenza)
-
+            isGameOver = savedInstanceState.getBoolean("IS_GAME_OVER",false)
             //aggiorno il testo della textview
             outputTV.text = stringaInput
+            //
         }
 
         avviaB.setOnClickListener {
@@ -230,24 +251,26 @@ class MainActivity : AppCompatActivity() {
         }
 
         finePartitaB.setOnClickListener {
-            //Controllo se è primo turno e utente non ha dato input ma è uscito subito
-            val primaSequenza = simonGame.difficoltaSequenza == 1 && countRettangoliPremutiTurno == 0
-            if(!primaSequenza) {
-                //Salva partita
-                val salvataggio = simonGame.creaSalvataggioPartitaCorrente(simonGame.sequenzaCorrente,countRettangoliPremutiTurno,simonGame.difficoltaSequenza-1)
-                RegistroPartite.addPartita(salvataggio)
-            }
-
-            //reset
-            stringaInput = ""
-            countRettangoliPremutiTurno = 0
-            countRettangoliPremutiCorrettamente = 0
-            precContatoreRettangoliCorretti = 0
-            simonGame.resetPartita()
-
+            finePartita()
             //chiamata a seconda schermata
             val intent = Intent(this, Schermata2::class.java)
             startActivity(intent)
+        }
+
+        onBackPressedDispatcher.addCallback(this){
+            if (isGameOver && !partitaInCorso) {
+                //Salva Partita
+                val salvataggio = simonGame.creaSalvataggioPartitaCorrente(
+                    simonGame.sequenzaCorrente,
+                    countRettangoliPremutiTurno,
+                    simonGame.difficoltaSequenza - 1
+                )
+                RegistroPartite.addPartita(salvataggio)
+                resetDatiGioco()
+            }else{
+                //SI Comporta come fine partita
+                finePartita()
+            }
         }
 
         griglia = mapOf<Char,TextView>(
