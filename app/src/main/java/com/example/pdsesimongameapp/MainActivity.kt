@@ -58,8 +58,6 @@ class MainActivity : AppCompatActivity() {
     var countRettangoliPremutiTurno = 0
     var countRettangoliPremutiCorrettamente = 0
     var countRettangoliPremutiPartita = 0
-    //Cache per ultimo turno
-    var precContatoreRettangoliCorretti = 0
 
     //Istanza del Gioco
     val simonGame : SimonGame = SimonGame()
@@ -69,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         val avviaB = findViewById<Button>(R.id.avviaB)
         val pausaB = findViewById<Button>(R.id.pausaB)
         val finePartitaB = findViewById<Button>(R.id.finePartitaB)
+        val outputTV = findViewById<TextView>(R.id.outputTV)
 
         when (statoPartita){
             StatoPartita.IDLE -> {
@@ -82,12 +81,15 @@ class MainActivity : AppCompatActivity() {
                 pausaB.isEnabled = true
                 finePartitaB.isEnabled = true
                 pausaB.text = getString(R.string.pause)
+                stringaInput = ""
+                outputTV.text = stringaInput
             }
 
             StatoPartita.TURNO_PLAYER -> {
                 avviaB.isEnabled = false
                 pausaB.isEnabled = false
                 finePartitaB.isEnabled = true
+                outputTV.text = stringaInput
             }
 
             StatoPartita.PAUSA -> {
@@ -101,12 +103,15 @@ class MainActivity : AppCompatActivity() {
                 avviaB.isEnabled = false
                 pausaB.isEnabled = false
                 finePartitaB.isEnabled = false
+                //Bloccare le visualizzazioni ?
+                turnoJob?.cancel()
             }
 
         }
     }
 
     suspend fun evidenziaView(view: View, alpha : Float = 0.4f, durataMs: Long = 150L){
+        if(!view.isAttachedToWindow) return //Basta questo controllo?
         //abbassa alpha
         view.alpha = alpha
         delay(durataMs)
@@ -114,44 +119,14 @@ class MainActivity : AppCompatActivity() {
         view.alpha = 1f
     }
 
-    fun aggiungiInput(carattere: Char, outputTextView: TextView){
-        if (!isInputGrigliaAbilitato()) return
-        countRettangoliPremutiPartita += 1 //incremento sempre
-
-        stringaInput += carattere
-        outputTextView.text = stringaInput
-        countRettangoliPremutiTurno += 1
-
-        lifecycleScope.launch {
-            evidenziaView(griglia[carattere]!!)
-        }
-        if (!simonGame.controllaCarattere(carattere,countRettangoliPremutiTurno-1)){
-            //PARTITA TERMINA CAMBIO FLAG, MESSAGGIO DI ERRORE, DISATTIVO BUTTON
-            statoPartita = StatoPartita.GAME_OVER
-            Toast.makeText(this, resources.getString(R.string.testo_errore),Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        //Incremento contatore rettangoli corretti
-        countRettangoliPremutiCorrettamente++
-
-        if(stringaInput.length == simonGame.difficoltaSequenza){
-            completaTurno()
-        }
-    }
-
-    fun isInputGrigliaAbilitato() : Boolean {
-        return statoPartita == StatoPartita.TURNO_PLAYER
-    }
-
     fun resetDatiGioco(){
         //reset
         stringaInput = ""
         countRettangoliPremutiTurno = 0
         countRettangoliPremutiCorrettamente = 0
-        precContatoreRettangoliCorretti = 0
         countRettangoliPremutiPartita = 0
         simonGame.resetPartita()
+        riproduzioneIndice = 0
     }
 
     fun togglePausa(){
@@ -165,49 +140,74 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun iniziaPartita(){
+        //Reset
+        simonGame.resetPartita()
+        resetDatiGioco()
+        //Avvio turno
+        iniziaTurno()
+    }
 
     fun iniziaTurno(){
 
         statoPartita = StatoPartita.TURNO_COMPUTER
 
+        //Genera nuovo carattere sequenza
+        simonGame.sequenzaCorrente += simonGame.generaCarattere()
 
         turnoJob = lifecycleScope.launch {
 
-            //ALLA fine ne genero uno alla volta, sono quelli da visualizzare che crescono
-            simonGame.sequenzaCorrente += simonGame.generaCarattere()
-
-            delay(500)
-            for(c in simonGame.sequenzaCorrente){
-
-                //se in pausa aspetta
+            while(riproduzioneIndice < simonGame.sequenzaCorrente.length){
                 while(statoPartita == StatoPartita.PAUSA){
                     delay(100)
                 }
-
-                val view = griglia[c]!!
+                //TODO: controllare rischio di uso operatore !! per forzare a essere non-null
+                val view = griglia[simonGame.sequenzaCorrente[riproduzioneIndice]]!!
+                delay(500)
                 evidenziaView(view = view)
-                delay(1000)
+                delay(500)
+                riproduzioneIndice += 1
             }
-
             statoPartita = StatoPartita.TURNO_PLAYER
         }
     }
 
+    fun aggiungiInput(carattere: Char, outputTextView: TextView){
+        //Controllo stato partita
+        if (statoPartita != StatoPartita.TURNO_PLAYER) return
+        countRettangoliPremutiPartita += 1 //incremento sempre
+
+        stringaInput += carattere
+        outputTextView.text = stringaInput
+        countRettangoliPremutiTurno += 1
+        //Per feedback visivo pure in input
+        lifecycleScope.launch {
+            evidenziaView(griglia[carattere]!!) //TODO: rischio? !!
+        }
+        //Controllo dinamico dell'input
+        if (!simonGame.controllaCarattere(carattere,countRettangoliPremutiTurno-1)){
+            //ERRORE -> PARTITA TERMINA
+            //  CAMBIO FLAG, MESSAGGIO DI ERRORE, DISATTIVO BUTTON
+            statoPartita = StatoPartita.GAME_OVER
+            Toast.makeText(this, resources.getString(R.string.testo_errore),Toast.LENGTH_SHORT).show()
+            return
+        }
+        //Nessun errore
+        //Incremento contatore rettangoli corretti
+        countRettangoliPremutiCorrettamente++
+        //Controllo se ha inserito tutto
+        if(stringaInput.length == simonGame.difficoltaSequenza){
+            completaTurno()
+        }
+    }
+
     fun completaTurno(){
-        //Salva turno precedente
-        precContatoreRettangoliCorretti = countRettangoliPremutiCorrettamente
+        //Resetto variabili del turno e sistemo
         countRettangoliPremutiTurno = 0
         countRettangoliPremutiCorrettamente = 0
-        stringaInput = ""
-        val output : TextView = findViewById(R.id.outputTV)
-        output.text = stringaInput
         //Aumenta difficoltà e avvia nuovo turno
-        lifecycleScope.launch {
-            statoPartita = StatoPartita.TURNO_COMPUTER
-            delay(500)
-            simonGame.aumentaDifficolta()
-            iniziaTurno()
-        }
+        simonGame.aumentaDifficolta()
+        iniziaTurno()
     }
 
     fun finePartita(){
@@ -227,7 +227,6 @@ class MainActivity : AppCompatActivity() {
         outState.putString("STRINGA_INPUT", stringaInput)
         outState.putInt("CONTATORE_RECT", countRettangoliPremutiTurno)
         outState.putInt("CONTATORE_CORRECT_RECT",countRettangoliPremutiCorrettamente)
-        outState.putInt("CONTATORE_TURNO_PRECEDENTE", precContatoreRettangoliCorretti)
         outState.putString("SEQUENZA_CORRENTE_PARTITA", simonGame.sequenzaCorrente)
         outState.putInt("DIFFICOLTA_CORRENTE_PARTITA", simonGame.difficoltaSequenza)
         outState.putString("STATO_PARTITA",statoPartita.name)
@@ -236,10 +235,11 @@ class MainActivity : AppCompatActivity() {
 
     //è necessario? o lascio come è stato lasciato dalla partita precedente la ui
     //                  mentre il cervello/gioco dietro è stato resettato
-    override fun onResume(){
+    override fun onResume() {
         super.onResume()
         val outputTV = findViewById<TextView>(R.id.outputTV)
         outputTV.text = stringaInput
+        aggiornaUIStato()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -264,7 +264,6 @@ class MainActivity : AppCompatActivity() {
             stringaInput = savedInstanceState.getString("STRINGA_INPUT","")
             countRettangoliPremutiTurno = savedInstanceState.getInt("CONTATORE_RECT", 0)
             countRettangoliPremutiCorrettamente = savedInstanceState.getInt("CONTATORE_CORRECT_RECT", 0)
-            precContatoreRettangoliCorretti = savedInstanceState.getInt("CONTATORE_TURNO_PRECEDENTE",0)
             simonGame.sequenzaCorrente = savedInstanceState.getString("SEQUENZA_CORRENTE_PARTITA","")
             simonGame.difficoltaSequenza = savedInstanceState.getInt("DIFFICOLTA_CORRENTE_PARTITA",simonGame.minDifficoltaSequenza)
             val statoString = savedInstanceState.getString("STATO_PARTITA")
@@ -277,9 +276,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         avviaB.setOnClickListener {
-
             //Avvia partita
-            iniziaTurno()
+            iniziaPartita()
         }
 
         pausaB.setOnClickListener {
