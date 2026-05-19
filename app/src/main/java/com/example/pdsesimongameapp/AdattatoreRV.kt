@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 
 class AdattatoreRV(private val lista: MutableList<SimonGame.SimonGameData>) : RecyclerView.Adapter<AdattatoreRV.PartitaViewHolder>() {
 
-    fun aggiornaLista(list: List<SimonGame.SimonGameData>){
-        lista.union(list)
+    fun aggiornaLista(){
+        if (lista.isNotEmpty()){
+            val ultimoIndice = lista.size - 1
+            notifyItemInserted(ultimoIndice)
+        }
     }
-
     class PartitaViewHolder(view: View) : RecyclerView.ViewHolder(view){
 
         private val contatoreTV : TextView = view.findViewById(R.id.contatoreTV)

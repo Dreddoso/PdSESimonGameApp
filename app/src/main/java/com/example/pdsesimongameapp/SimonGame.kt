@@ -40,7 +40,7 @@ class SimonGame(listaColoriChar : List<Char> = listOf('Y','R','G','B','M','C')) 
         return c == sequenzaCorrente[index]
     }
 
-    fun creaSalvataggioPartitaCorrente(sequenzaInput : String = "", indice : Int = 0, bestScore : Int = 0) : SimonGameData {
-        return SimonGameData(maxLunghezzaSequenzaCorretta = bestScore, sequenza = sequenzaInput, indexFirstWrongChar = indice)
+    fun creaSalvataggioPartita(sequenzaInput : String = "", indiceErrore : Int = 0, bestScore : Int = 0) : SimonGameData {
+        return SimonGameData(maxLunghezzaSequenzaCorretta = bestScore, sequenza = sequenzaInput, indexFirstWrongChar = indiceErrore)
     }
 }

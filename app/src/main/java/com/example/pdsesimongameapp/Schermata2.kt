@@ -14,9 +14,16 @@ class Schermata2 : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adattatoreRV : AdattatoreRV
 
+    private var quantitaPartitePrecedenti = 0
+
     override fun onResume() {
         super.onResume()
-        adattatoreRV.aggiornaLista(RegistroPartite.listaPartite)
+        val quantitaPartiteAttuali = RegistroPartite.listaPartite.size
+        if (quantitaPartiteAttuali > quantitaPartitePrecedenti){
+            adattatoreRV.aggiornaLista()
+            recyclerView.smoothScrollToPosition(quantitaPartiteAttuali - 1)
+        }
+        quantitaPartitePrecedenti = quantitaPartiteAttuali
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +35,9 @@ class Schermata2 : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        quantitaPartitePrecedenti = RegistroPartite.listaPartite.size
+
         adattatoreRV = AdattatoreRV(RegistroPartite.listaPartite)
         //collegamento RecyclerView
         recyclerView = findViewById(R.id.recyclerView)

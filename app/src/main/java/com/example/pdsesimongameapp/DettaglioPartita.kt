@@ -2,6 +2,7 @@ package com.example.pdsesimongameapp
 
 import android.os.Bundle
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -29,5 +30,9 @@ class DettaglioPartita : AppCompatActivity() {
         contatoreTV.text = contatore.toString()
         val sequenzaTV : TextView = findViewById(R.id.dettagliSequenzaTV)
         sequenzaTV.text = EditTextUtilis.getEditString(sequenza,index)
+
+        onBackPressedDispatcher.addCallback{
+            finish()
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.pdsesimongameapp
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -234,6 +233,7 @@ class MainActivity : AppCompatActivity() {
             //  CAMBIO FLAG, MESSAGGIO DI ERRORE, DISATTIVO BUTTON
             statoPartita = StatoPartita.GAME_OVER
             disattivaInput()
+            salvaPartita()
             Toast.makeText(this, resources.getString(R.string.testo_errore),Toast.LENGTH_SHORT).show()
             return
         }
@@ -258,16 +258,36 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun finePartita(){
-        statoPartita = StatoPartita.FINE_PARTITA
-        //Controllo se è primo turno e utente non ha dato input ma è uscito subito
-        val primaSequenza = simonGame.difficoltaSequenza == 1 && countRettangoliPremutiTurno == 0
-        if(!primaSequenza) {
-            //Salva partita
-            val salvataggio = simonGame.creaSalvataggioPartitaCorrente(simonGame.sequenzaCorrente,countRettangoliPremutiTurno,simonGame.difficoltaSequenza-1)
-            RegistroPartite.addPartita(salvataggio)
+        //Se gameover ha gia salvato quando è avvenuto il fatto
+        if (statoPartita == StatoPartita.GAME_OVER){
+            statoPartita = StatoPartita.FINE_PARTITA
+            turnoJob?.cancel()
+            resetDatiGioco()
+            return
         }
+
+        statoPartita = StatoPartita.FINE_PARTITA
+        salvaPartita() //Salva abbandono volontario
         turnoJob?.cancel()
         resetDatiGioco()
+    }
+
+    fun salvaPartita(){
+        val primaSequenza = simonGame.difficoltaSequenza == 1 && countRettangoliPremutiTurno == 0
+        if(primaSequenza){
+            return
+        }
+        val indiceErrore = if(statoPartita == StatoPartita.GAME_OVER){
+            (countRettangoliPremutiTurno-1).coerceAtLeast(0)
+        }else{
+            countRettangoliPremutiTurno
+        }
+        val salvataggio = simonGame.creaSalvataggioPartita(
+            bestScore = simonGame.difficoltaSequenza-1,
+            sequenzaInput = simonGame.sequenzaCorrente,
+            indiceErrore = indiceErrore
+        )
+        RegistroPartite.addPartita(salvataggio)
     }
 
     override fun onSaveInstanceState(outState: Bundle){
@@ -305,24 +325,11 @@ class MainActivity : AppCompatActivity() {
 
         finePartitaB.setOnClickListener {
             finePartita()
-            //chiamata a seconda schermata
-            val intent = Intent(this, Schermata2::class.java)
-            startActivity(intent)
+            finish()
         }
 
         onBackPressedDispatcher.addCallback(this){
-            if (statoPartita == StatoPartita.GAME_OVER) {
-                //Salva Partita
-                val salvataggio = simonGame.creaSalvataggioPartitaCorrente(
-                    simonGame.sequenzaCorrente,
-                    countRettangoliPremutiTurno-1,
-                    simonGame.difficoltaSequenza - 1
-                )
-                RegistroPartite.addPartita(salvataggio)
-            }else{
-                //Si comporta come fine partita
-                finePartita()
-            }
+            finePartita()
             finish()
         }
 
