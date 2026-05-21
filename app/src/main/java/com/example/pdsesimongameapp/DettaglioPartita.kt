@@ -29,7 +29,7 @@ class DettaglioPartita : AppCompatActivity() {
         val contatoreTV : TextView = findViewById(R.id.dettagliContatoreTV)
         contatoreTV.text = contatore.toString()
         val sequenzaTV : TextView = findViewById(R.id.dettagliSequenzaTV)
-        sequenzaTV.text = EditTextUtilis.getEditString(sequenza,index)
+        sequenzaTV.text = TextUtilis.getEditString(sequenza,index)
 
         onBackPressedDispatcher.addCallback{
             finish()

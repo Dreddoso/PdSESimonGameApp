@@ -24,7 +24,7 @@ class AdattatoreRV(private val lista: MutableList<SimonGame.SimonGameData>) : Re
                         fun bind(partita: SimonGame.SimonGameData){
                             contatoreTV.text = partita.maxLunghezzaSequenzaCorretta.toString()
 
-                            sequenzaTV.text = EditTextUtilis.getEditString(partita.sequenza,partita.indexFirstWrongChar)
+                            sequenzaTV.text = TextUtilis.getEditString(partita.sequenza,partita.indexFirstWrongChar)
                         }
     }
 

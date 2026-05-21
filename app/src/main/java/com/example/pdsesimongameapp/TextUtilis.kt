@@ -5,7 +5,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 
-object EditTextUtilis {
+object TextUtilis {
     fun getEditString(s: String, errorIndex : Int ) : SpannableString{
         val safeIndex = errorIndex.coerceIn(0, s.length) //Evita crash se index è fuori dai limiti [0,s.length]
         val spannableString = SpannableString(s)
