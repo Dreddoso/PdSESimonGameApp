@@ -1,6 +1,6 @@
 package com.example.pdsesimongameapp
 
-class SimonGame(listaColoriChar : List<Char> = listOf('Y','R','G','B','M','C')) {
+class SimonGame(private val caratteri : List<Char> = listOf('Y','R','G','B','M','C')) {
 
      data class SimonGameData(
         val maxLunghezzaSequenzaCorretta : Int = 0,
@@ -8,39 +8,12 @@ class SimonGame(listaColoriChar : List<Char> = listOf('Y','R','G','B','M','C')) 
         val indexFirstWrongChar : Int = 0
     )
 
-    val caratteri = listaColoriChar
-    var sequenzaCorrente : String = ""
-    var difficoltaSequenza : Int = 1 //Lunghezza sequenza (Minimo 1)
-    var minDifficoltaSequenza : Int = 1
-
-    fun resetPartita(){
-        sequenzaCorrente = ""
-        difficoltaSequenza = minDifficoltaSequenza
-    }
-
-    //nuovo livello +1 su lunghezza sequenza
-    fun aumentaDifficolta(){
-        difficoltaSequenza++
-        //la sequenza rimane uguale e genera un nuovo carattere
-    }
-
-    //RESTITUISCE UN CARATTERE CASUALE
     fun generaCarattere(): Char {
         return caratteri.random()
     }
 
-    fun controllaUltimoCarattere(c : Char) : Boolean{
-        if (sequenzaCorrente.isEmpty()) return false
-        return c == sequenzaCorrente[sequenzaCorrente.length-1]
+    fun controllaCarattere(c: Char, index : Int, sequenza: String) : Boolean {
+        return index in sequenza.indices && c == sequenza[index]
     }
 
-    fun controllaCarattere(c: Char, index : Int) : Boolean {
-        if(sequenzaCorrente.isEmpty()) return false
-        if(index >= sequenzaCorrente.length || index < 0) return false
-        return c == sequenzaCorrente[index]
-    }
-
-    fun creaSalvataggioPartita(sequenzaPartita : String = "", indiceErrore : Int = 0, bestScore : Int = 0) : SimonGameData {
-        return SimonGameData(maxLunghezzaSequenzaCorretta = bestScore, sequenza = sequenzaPartita, indexFirstWrongChar = indiceErrore)
-    }
 }
