@@ -38,6 +38,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var outputTV : TextView
     private var evidenziaJob : Job? = null
 
+    private var riproduciTonoJob : Job? = null
+
     private lateinit var audioGameManager: AudioGameManager
 
 
@@ -105,6 +107,14 @@ class MainActivity : AppCompatActivity() {
             evidenziaJob?.cancel()
         }
 
+    }
+
+    fun riproduciTono(char: Char){
+        riproduciTonoJob?.cancel()
+        riproduciTonoJob = lifecycleScope.launch {
+            audioGameManager.riproduciTono(char)
+            riproduciTonoJob?.cancel()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -179,7 +189,7 @@ class MainActivity : AppCompatActivity() {
                                 if (view != null) {
                                     evidenziaView(view)
                                 }
-                                audioGameManager.riproduciTono(feedback.char)
+                                riproduciTono(feedback.char)
                             }
 
                             is FeedbackGioco.GameOver ->{
