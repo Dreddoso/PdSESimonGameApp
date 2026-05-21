@@ -1,0 +1,123 @@
+fun riproduciSequenza(){
+        turnoJob?.cancel()
+
+        disattivaInput()
+
+        turnoJob = lifecycleScope.launch {
+            delay(700)
+
+            while(riproduzioneIndice < simonGame.sequenzaCorrente.length){
+                if(statoPartita == StatoPartita.FINE_PARTITA ||
+                    statoPartita == StatoPartita.GAME_OVER){
+                    return@launch
+                } //NEcessario?
+                while (statoPartita == StatoPartita.PAUSA){
+                    delay(100)
+                }
+
+                val view = griglia[simonGame.sequenzaCorrente[riproduzioneIndice]]!!
+                evidenziaView(view = view)
+                delay(250)
+                riproduzioneIndice += 1
+            }
+            riproduzioneIndice = 0
+            if (statoPartita == StatoPartita.TURNO_COMPUTER) {
+                statoPartita = StatoPartita.TURNO_PLAYER
+                attivaInput()
+            }
+        }
+    }
+
+    fun iniziaPartita(){
+        //Reset
+        simonGame.resetPartita()
+        resetDatiGioco()
+        //Avvio turno
+        iniziaNuovoTurno()
+    }
+
+    fun iniziaNuovoTurno(){
+        statoPartita = StatoPartita.TURNO_COMPUTER
+        simonGame.sequenzaCorrente += simonGame.generaCarattere()
+        riproduzioneIndice = 0
+        riproduciSequenza()
+    }
+
+    fun riprendiTurno(){
+        statoPartita = StatoPartita.TURNO_COMPUTER
+        riproduciSequenza()
+    }
+
+    fun aggiungiInput(carattere: Char){
+        //Controllo stato partita
+        if (statoPartita != StatoPartita.TURNO_PLAYER) return
+        countRettangoliPremutiPartita += 1 //incremento sempre
+        //Per feedback visivo pure in input
+        lifecycleScope.launch {
+            evidenziaView(griglia[carattere]!!) //TODO: rischio? !!
+        }
+        stringaInput += carattere
+        findViewById<TextView>(R.id.outputTV).text = stringaInput //Invece di chiamare metodo aggiornaUIStato()
+        countRettangoliPremutiTurno += 1
+        //Controllo dinamico dell'input
+        if (!simonGame.controllaCarattere(carattere,countRettangoliPremutiTurno-1)){
+            //ERRORE -> PARTITA TERMINA
+            //  CAMBIO FLAG, MESSAGGIO DI ERRORE, DISATTIVO BUTTON
+            statoPartita = StatoPartita.GAME_OVER
+            disattivaInput()
+            salvaPartita()
+            Toast.makeText(this, resources.getString(R.string.testo_errore),Toast.LENGTH_SHORT).show()
+            return
+        }
+        //Nessun errore
+        //Controllo se ha inserito tutto
+        if(stringaInput.length == simonGame.sequenzaCorrente.length){
+            completaTurno()
+        }
+    }
+
+    fun completaTurno(){
+        statoPartita = StatoPartita.TURNO_COMPUTER //per bloccare input utente
+        turnoJob?.cancel()
+        lifecycleScope.launch {
+            delay(500)
+            //Resetto variabili del turno e sistemo
+            countRettangoliPremutiTurno = 0
+            //Aumenta difficoltà e avvia nuovo turno
+            simonGame.aumentaDifficolta()
+            iniziaNuovoTurno()
+        }
+    }
+
+    fun finePartita(){
+        //Se gameover ha gia salvato quando è avvenuto il fatto
+        if (statoPartita == StatoPartita.GAME_OVER){
+            statoPartita = StatoPartita.FINE_PARTITA
+            turnoJob?.cancel()
+            resetDatiGioco()
+            return
+        }
+
+        statoPartita = StatoPartita.FINE_PARTITA
+        salvaPartita() //Salva abbandono volontario
+        turnoJob?.cancel()
+        resetDatiGioco()
+    }
+
+    fun salvaPartita(){
+        val primaSequenza = simonGame.difficoltaSequenza == 1 && countRettangoliPremutiTurno == 0
+        if(primaSequenza){
+            return
+        }
+        val indiceErrore = if(statoPartita == StatoPartita.GAME_OVER){
+            (countRettangoliPremutiTurno-1).coerceAtLeast(0)
+        }else{
+            countRettangoliPremutiTurno
+        }
+        val salvataggio = simonGame.creaSalvataggioPartita(
+            bestScore = simonGame.difficoltaSequenza-1,
+            sequenzaPartita = simonGame.sequenzaCorrente,
+            indiceErrore = indiceErrore
+        )
+        RegistroPartite.addPartita(salvataggio)
+    }
