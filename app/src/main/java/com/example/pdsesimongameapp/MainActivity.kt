@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.Job
@@ -28,7 +29,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-     private val viewModel : GiocoViewModel by viewModels()
+     private lateinit var  viewModel : GiocoViewModel
 
     //Componenti UI
     lateinit var griglia : Map<Char, TextView>
@@ -126,6 +127,13 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val db = PartitaDatabase.getDatabase(this)
+        val dao = db.partitaDao()
+        val repository = PartitaRepository(dao)
+        val factory = GiocoViewModelFactory(repository)
+
+        viewModel = ViewModelProvider(this,factory)[GiocoViewModel::class.java]
 
         audioGameManager = AudioGameManager()
 

@@ -121,3 +121,17 @@ fun riproduciSequenza(){
         )
         RegistroPartite.addPartita(salvataggio)
     }
+
+
+//CODICE in schermata2 metodo classe Schermata2 :
+    private var quantitaPartitePrecedenti = 0
+
+    override fun onResume() {
+        super.onResume()
+        val quantitaPartiteAttuali = RegistroPartite.listaPartite.size
+        if (quantitaPartiteAttuali > quantitaPartitePrecedenti){
+            adattatoreRV.aggiornaLista()
+            recyclerView.smoothScrollToPosition(quantitaPartiteAttuali - 1)
+        }
+        quantitaPartitePrecedenti = quantitaPartiteAttuali
+    }

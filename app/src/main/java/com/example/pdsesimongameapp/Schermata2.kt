@@ -16,17 +16,7 @@ class Schermata2 : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adattatoreRV : AdattatoreRV
 
-    private var quantitaPartitePrecedenti = 0
 
-    override fun onResume() {
-        super.onResume()
-        val quantitaPartiteAttuali = RegistroPartite.listaPartite.size
-        if (quantitaPartiteAttuali > quantitaPartitePrecedenti){
-            adattatoreRV.aggiornaLista()
-            recyclerView.smoothScrollToPosition(quantitaPartiteAttuali - 1)
-        }
-        quantitaPartitePrecedenti = quantitaPartiteAttuali
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,12 +34,10 @@ class Schermata2 : AppCompatActivity() {
             startActivity(intent)
         }
 
-        quantitaPartitePrecedenti = RegistroPartite.listaPartite.size
-
+        val db = PartitaDatabase.getDatabase(this@Schermata2)
+        val repository = PartitaRepository(db.partitaDao())
         lifecycleScope.launch {
-            val db = PartitaDatabase.getDatabase(this@Schermata2)
-            val lista = db.partitaDao().getAll()
-
+            val lista = repository.getPartite()
             adattatoreRV = AdattatoreRV(lista)
             //collegamento RecyclerView
             recyclerView = findViewById(R.id.recyclerView)
