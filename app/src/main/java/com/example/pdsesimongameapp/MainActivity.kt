@@ -7,10 +7,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -24,18 +27,13 @@ import kotlinx.coroutines.launch
 
 
 //REFACTORING AL POSTO DI BOOLEAN SPARSI E CHE SOVRAPPONGONO LOGICA un enum STATOPARTITA (tipo state machine)
-enum class StatoPartita{
-    IDLE, //nessuna partita iniziata
-    TURNO_COMPUTER, //computer mostra la sequenza
-    TURNO_PLAYER, //giocatore inserisce input
-    PAUSA, //pausa durante turno computer
-    GAME_OVER, //errore del giocatore
-    FINE_PARTITA //Terminazione volontaria della partita
-}
 
 //TODO: refactoring -> spostare la logica per stato e ripristino UI in una viewmodel ??
 
 class MainActivity : AppCompatActivity() {
+
+     val viewModel : GiocoViewModel = GiocoViewModel()
+
     //Componenti UI
     lateinit var griglia : Map<Char, TextView>
 
@@ -284,7 +282,7 @@ class MainActivity : AppCompatActivity() {
         }
         val salvataggio = simonGame.creaSalvataggioPartita(
             bestScore = simonGame.difficoltaSequenza-1,
-            sequenzaInput = simonGame.sequenzaCorrente,
+            sequenzaPartita = simonGame.sequenzaCorrente,
             indiceErrore = indiceErrore
         )
         RegistroPartite.addPartita(salvataggio)
@@ -363,7 +361,25 @@ class MainActivity : AppCompatActivity() {
             //Ripristinare lo stato
             ripristinaStatoPartita()
         }
-        //Refresh iniziale (necessario?)
-        aggiornaUIStato()
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED){
+                viewModel.feedbacks.collect { feedback ->
+                    when(feedback){
+                        is FeedbackGioco.Evidenzia -> {
+                            val view = griglia[feedback.char]
+                            if (view != null){
+                                evidenziaView(view)
+                            }
+                        }
+
+                        is FeedbackGioco.SequenzaFinita -> {
+                            //Aspetta input giocatore
+                            attivaInput()
+                        }
+                    }
+                }
+            }
+        }
     }
 }
