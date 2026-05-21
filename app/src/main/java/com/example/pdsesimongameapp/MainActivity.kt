@@ -38,6 +38,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var outputTV : TextView
     private var evidenziaJob : Job? = null
 
+    private lateinit var audioGameManager: AudioGameManager
+
 
     fun aggiornaUIStato(stato: DataUIStatoPartita){
         when (stato.statoPartita){
@@ -91,6 +93,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun evidenziaView(view: View, alpha : Float = 0.4f, durataMs: Long = 450L){
+        evidenziaJob?.cancel()
+        
         evidenziaJob = lifecycleScope.launch {
             if(!view.isAttachedToWindow) return@launch //Basta questo controllo?
             //abbassa alpha
@@ -112,6 +116,8 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        audioGameManager = AudioGameManager()
 
         avviaB = findViewById<Button>(R.id.avviaB)
         pausaB = findViewById<Button>(R.id.pausaB)
@@ -154,6 +160,11 @@ class MainActivity : AppCompatActivity() {
         for ((char,view) in griglia){
             view.setOnClickListener {
                 viewModel.aggiungiInput(char)
+                val view = griglia[char]
+                if (view != null) {
+                    evidenziaView(view)
+                }
+                audioGameManager.riproduciTono(char)
             }
         }
 
@@ -168,6 +179,7 @@ class MainActivity : AppCompatActivity() {
                                 if (view != null) {
                                     evidenziaView(view)
                                 }
+                                audioGameManager.riproduciTono(feedback.char)
                             }
 
                             is FeedbackGioco.GameOver ->{
