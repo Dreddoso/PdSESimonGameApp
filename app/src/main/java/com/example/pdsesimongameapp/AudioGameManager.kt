@@ -18,6 +18,8 @@ class AudioGameManager {
         'C' to 440.00  // LA
     )
 
+    //TODO : gestire job per riproduzione tono come per evidenzia view
+    //      quando riproduce sequenza o input e giro velocemente perde come l'audio, non si sente nulla
     fun riproduciTono(char : Char, durataMs: Int = 350){
         val frequenza = frequenze[char] ?: return
         val numSamples = (durataMs * sampleRate / 1000.0).toInt()
