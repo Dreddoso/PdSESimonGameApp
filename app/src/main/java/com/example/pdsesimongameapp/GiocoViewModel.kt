@@ -19,7 +19,7 @@ sealed class  FeedbackGioco {
     object GameOver : FeedbackGioco()
 }
 
-class GiocoViewModel : ViewModel() {
+class GiocoViewModel(private val repository: PartitaRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DataUIStatoPartita())
     val uiState = _uiState.asStateFlow() //Variabile pubblica leggibile ma non modificabile da UI
@@ -142,12 +142,14 @@ class GiocoViewModel : ViewModel() {
         val stato = _uiState.value
         //Se prima sequenza => livello 1 e turno computer (sto mostrando la sequenza) -> non salvo
         if(stato.difficoltaPartita == 1 && stato.statoPartita == StatoPartita.TURNO_COMPUTER) return
-        val salvataggio = SimonGame.SimonGameData(
-            maxLunghezzaSequenzaCorretta = stato.bestScore,
-            sequenza = stato.sequenzaComputer,
-            indexFirstWrongChar = stato.indiceErrore
+        val partita = Partita(
+            score = stato.bestScore,
+            indiceErrore = stato.indiceErrore,
+            sequenza = stato.sequenzaComputer
         )
-        RegistroPartite.addPartita(salvataggio)
+        viewModelScope.launch {
+            repository.salvaPartita(partita)
+        }
     }
 
     fun aggiungiInput(char : Char){
