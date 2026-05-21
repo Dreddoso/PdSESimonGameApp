@@ -1,9 +1,12 @@
 package com.example.pdsesimongameapp
 
 object RegistroPartite {
-    val listaPartite = mutableListOf<SimonGame.SimonGameData>()
+
+    private val _listaPartite = mutableListOf<SimonGame.SimonGameData>()
+    val listaPartite : List<SimonGame.SimonGameData> get() = _listaPartite
+
     fun addPartita (partita: SimonGame.SimonGameData)  {
-        listaPartite.add(partita)
+        _listaPartite.add(partita)
     }
 
 }
