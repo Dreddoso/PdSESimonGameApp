@@ -1,7 +1,7 @@
 package com.example.pdsesimongameapp
 
+import android.media.AudioAttributes
 import android.media.AudioFormat
-import android.media.AudioManager
 import android.media.AudioTrack
 import kotlin.math.PI
 import kotlin.math.sin
@@ -27,30 +27,33 @@ class AudioGameManager {
 
             samples[i] = (sin(angle) * Short.MAX_VALUE).toInt().toShort()
         }
-        val audioTrack = AudioTrack(
-            AudioManager.STREAM_MUSIC,
-            sampleRate,
-            AudioFormat.CHANNEL_OUT_MONO,
-            AudioFormat.ENCODING_PCM_16BIT,
-            samples.size * 2,
-            AudioTrack.MODE_STATIC
-        )
 
-        audioTrack.write(samples,0,samples.size)
-        audioTrack.setNotificationMarkerPosition(samples.size)
+        val bufferSize = samples.size * 2
+        val track = AudioTrack.Builder()
+            .setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build()
+            )
+            .setAudioFormat(
+                AudioFormat.Builder()
+                    .setSampleRate(sampleRate)
+                    .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                    .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                    .build()
+            )
+            .setBufferSizeInBytes(bufferSize)
+            .setTransferMode(AudioTrack.MODE_STATIC)
+            .build()
+        track.write(samples,0,samples.size)
+        track.play()
 
-        audioTrack.setPlaybackPositionUpdateListener(
-            object : AudioTrack.OnPlaybackPositionUpdateListener{
-                override fun onMarkerReached(track: AudioTrack?) {
-                    track?.release()
-                }
-
-                override fun onPeriodicNotification(track: AudioTrack?) {
-                    //
-                }
-            }
-        )
-        audioTrack.play()
+        //Basta come clean up
+        Thread {
+            Thread.sleep(durataMs.toLong() + 100)
+            track.release()
+        }.start()
     }
 
 }

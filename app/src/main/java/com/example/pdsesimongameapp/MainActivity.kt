@@ -119,10 +119,10 @@ class MainActivity : AppCompatActivity() {
 
         audioGameManager = AudioGameManager()
 
-        avviaB = findViewById<Button>(R.id.avviaB)
-        pausaB = findViewById<Button>(R.id.pausaB)
-        finePartitaB = findViewById<Button>(R.id.finePartitaB)
-        outputTV = findViewById<TextView>(R.id.outputTV)
+        avviaB = findViewById(R.id.avviaB)
+        pausaB = findViewById(R.id.pausaB)
+        finePartitaB = findViewById(R.id.finePartitaB)
+        outputTV = findViewById(R.id.outputTV)
 
         avviaB.setOnClickListener {
             //Avvia partita
