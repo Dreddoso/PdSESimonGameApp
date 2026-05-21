@@ -13,39 +13,46 @@ import kotlinx.coroutines.launch
 
 sealed class  FeedbackGioco {
     data class Evidenzia(val char: Char) : FeedbackGioco()
+    object SequenzaIniziata : FeedbackGioco()
     object  SequenzaFinita : FeedbackGioco()
+
+    object GameOver : FeedbackGioco()
 }
 
 class GiocoViewModel : ViewModel() {
+
     private val _uiState = MutableStateFlow(DataUIStatoPartita())
     val uiState = _uiState.asStateFlow() //Variabile pubblica leggibile ma non modificabile da UI
 
     private val _feedbacks = MutableSharedFlow<FeedbackGioco>() //Per comunciazione con activity
     val feedbacks = _feedbacks.asSharedFlow()
 
-    private lateinit var simonGame : SimonGame
+    private var simonGame : SimonGame = SimonGame()
 
     private var turnoJob : Job? = null
+    private var indiceRiproduzione = 0
+
+    private var statoPrePausa : StatoPartita? = null
+
+    private  fun aggiornaBestScore(){
+        _uiState.update {
+            it.copy(
+                bestScore = maxOf(it.bestScore,it.difficoltaPartita)
+            )
+        }
+    }
 
     fun avviaPartita(){
-        simonGame = SimonGame()
         avviaNuovoTurno()
     }
 
     fun avviaNuovoTurno(){
         _uiState.update { currentState ->
+            val nuovoChar = simonGame.generaCarattere()
+            val nuovaSequenza = currentState.sequenzaComputer + nuovoChar
             currentState.copy(
                 statoPartita = StatoPartita.TURNO_COMPUTER,
-                sequenzaComputer = currentState.sequenzaComputer + simonGame.generaCarattere()
-            )
-        }
-        riproduciSequenza()
-    }
-
-    fun riprendiTurno(){
-        _uiState.update {
-            it.copy(
-                statoPartita = StatoPartita.TURNO_COMPUTER
+                sequenzaComputer = nuovaSequenza
             )
         }
         riproduciSequenza()
@@ -53,37 +60,43 @@ class GiocoViewModel : ViewModel() {
 
     fun riproduciSequenza(){
         turnoJob?.cancel()
-
+        if (turnoJob?.isActive == true) return
         turnoJob = viewModelScope.launch{
-            val state = _uiState.value
             delay(700)
-
-            for (i in state.indiceRiproduzione until state.sequenzaComputer.length){
-                val char = state.sequenzaComputer[i]
+            _feedbacks.emit(FeedbackGioco.SequenzaIniziata)
+            while (indiceRiproduzione < _uiState.value.sequenzaComputer.length){
+                val char = _uiState.value.sequenzaComputer[indiceRiproduzione]
                 _feedbacks.emit(FeedbackGioco.Evidenzia(char))
 
+                indiceRiproduzione += 1
                 delay(600)
 
-                _uiState.update {
-                    it.copy(indiceRiproduzione = i + 1)
-                }
             }
 
             _uiState.update {
                 it.copy(
                     statoPartita = StatoPartita.TURNO_PLAYER,
-                    indiceRiproduzione = 0
                 )
             }
+            indiceRiproduzione = 0
+            _feedbacks.emit(FeedbackGioco.SequenzaFinita)
         }
     }
 
     fun concludiTurno(){
-        turnoJob?.cancel()
-        simonGame.aumentaDifficolta()
         _uiState.update {
-            it.copy( //TODO: controlla se corretto
-                difficoltaPartita = if(it.difficoltaPartita < simonGame.difficoltaSequenza) simonGame.difficoltaSequenza else it.difficoltaPartita + 1
+            it.copy(
+                statoPartita = StatoPartita.TURNO_COMPUTER
+            )
+        }
+        //Turno completato aggiorna max sequenza corretta
+        aggiornaBestScore()
+        //Aumenta difficolta
+        _uiState.update {
+            it.copy(
+                difficoltaPartita = it.difficoltaPartita + 1,
+                stringaInput = "",
+                indiceInput = 0
             )
         }
         viewModelScope.launch {
@@ -106,6 +119,16 @@ class GiocoViewModel : ViewModel() {
             return
         }
         //Se non era il primo turno salva partita
+        val indiceErroreCorretto =
+            if (stato.statoPartita == StatoPartita.TURNO_PLAYER)
+                stato.indiceInput
+            else
+                indiceRiproduzione
+        _uiState.update {
+            it.copy(
+                indiceErrore = indiceErroreCorretto
+            )
+        }
         salvaPartita()
         _uiState.update {
             it.copy(
@@ -119,36 +142,61 @@ class GiocoViewModel : ViewModel() {
         val stato = _uiState.value
         //Se prima sequenza => livello 1 e turno computer (sto mostrando la sequenza) -> non salvo
         if(stato.difficoltaPartita == 1 && stato.statoPartita == StatoPartita.TURNO_COMPUTER) return
-        val salvataggio = simonGame.creaSalvataggioPartita(
-            bestScore = stato.bestScore,
-            sequenzaPartita = stato.sequenzaComputer,
-            indiceErrore = stato.indiceErrore
+        val salvataggio = SimonGame.SimonGameData(
+            maxLunghezzaSequenzaCorretta = stato.bestScore,
+            sequenza = stato.sequenzaComputer,
+            indexFirstWrongChar = stato.indiceErrore
         )
         RegistroPartite.addPartita(salvataggio)
     }
 
     fun aggiungiInput(char : Char){
         val state = _uiState.value
-        val corretto = simonGame.controllaCarattere(char,state.indiceInput)
+        if (state.statoPartita != StatoPartita.TURNO_PLAYER) return
+        val corretto = simonGame.controllaCarattere(char,state.indiceInput, state.sequenzaComputer)
 
         if(!corretto){
             _uiState.update {
                 it.copy(
                     statoPartita = StatoPartita.GAME_OVER,
-                    indiceErrore = it.indiceInput
+                    indiceErrore = it.indiceInput  //TODO controllare se corretto
                 )
             }
+            viewModelScope.launch {
+                _feedbacks.emit(FeedbackGioco.GameOver)
+            }
+
             return
         }
 
         val nuovoInput = state.stringaInput + char
         _uiState.update {
             it.copy(
-                stringaInput = nuovoInput
+                stringaInput = nuovoInput,
+                indiceInput =  it.indiceInput + 1
             )
         }
         if (nuovoInput.length == state.sequenzaComputer.length){
             concludiTurno()
+        }
+    }
+
+    fun togglePausa(){
+        _uiState.update {
+            when(it.statoPartita){
+                StatoPartita.TURNO_COMPUTER ->{
+                    turnoJob?.cancel()
+                    statoPrePausa = it.statoPartita
+                    it.copy(statoPartita = StatoPartita.PAUSA)
+                }
+                StatoPartita.PAUSA -> {
+                    riproduciSequenza()
+                    it.copy(
+                        statoPartita = statoPrePausa ?: StatoPartita.TURNO_COMPUTER
+                    )
+                }
+                else -> it
+            }
         }
     }
 }
