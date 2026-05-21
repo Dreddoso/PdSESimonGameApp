@@ -11,7 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.Job
@@ -26,42 +26,17 @@ import kotlinx.coroutines.launch
  **/
 
 
-//REFACTORING AL POSTO DI BOOLEAN SPARSI E CHE SOVRAPPONGONO LOGICA un enum STATOPARTITA (tipo state machine)
-
-//TODO: refactoring -> spostare la logica per stato e ripristino UI in una viewmodel ??
-
 class MainActivity : AppCompatActivity() {
 
-     val viewModel : GiocoViewModel = GiocoViewModel()
+     private val viewModel : GiocoViewModel by viewModels()
 
     //Componenti UI
     lateinit var griglia : Map<Char, TextView>
-
-    //JOB per gestire la pausa durante visualizzazione della sequenza
-    var turnoJob : Job? = null
-    var riproduzioneIndice = 0
-    //STATO DELLA PARTITA
-    var statoPartita = StatoPartita.IDLE
-        set(value) {  //In questo modo ogni cambio di stato aggiorna automaticamente la UI
-            field = value
-            if(::griglia.isInitialized){ // :: operatore di riferimento ("puntatore" sicuro)
-                aggiornaUIStato()
-            }
-        }
-    //Input
-    var stringaInput = ""
-    //Contatori del turno
-    var countRettangoliPremutiTurno = 0
-    var countRettangoliPremutiPartita = 0
-
-    //Istanza del Gioco
-    val simonGame : SimonGame = SimonGame()
-
-    fun disattivaInput(){
-        for((_,view) in griglia){
-            view.isEnabled = false
-        }
-    }
+    private lateinit var avviaB : Button
+    private lateinit var pausaB : Button
+    private lateinit var finePartitaB : Button
+    private lateinit var outputTV : TextView
+    private var evidenziaJob : Job? = null
 
     fun attivaInput(){
         for((_,view) in griglia){
