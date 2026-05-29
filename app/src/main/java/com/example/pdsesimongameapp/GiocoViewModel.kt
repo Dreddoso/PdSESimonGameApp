@@ -202,8 +202,5 @@ class GiocoViewModel(private val repository: PartitaRepository) : ViewModel() {
         }
     }
 
-    suspend fun getPartite() : List<Partita> {
-        return repository.getPartite()
-    }
 
 }

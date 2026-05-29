@@ -127,9 +127,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val db = PartitaDatabase.getDatabase(this)
-        val dao = db.partitaDao()
-        val repository = PartitaRepository(dao)
+        val repository = AppContainer.repository
         val factory = GiocoViewModelFactory(repository)
 
         viewModel = ViewModelProvider(this,factory)[GiocoViewModel::class.java]
