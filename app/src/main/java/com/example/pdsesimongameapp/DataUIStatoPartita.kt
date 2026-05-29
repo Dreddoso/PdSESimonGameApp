@@ -1,5 +1,9 @@
 package com.example.pdsesimongameapp
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class DataUIStatoPartita(
     val statoPartita: StatoPartita = StatoPartita.IDLE,
     val sequenzaComputer: String = "",
@@ -8,4 +12,4 @@ data class DataUIStatoPartita(
     val indiceInput: Int = 0,
     val indiceErrore: Int = 0,
     val bestScore: Int = 0
-)
+) : Parcelable
