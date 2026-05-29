@@ -9,5 +9,5 @@ data class Partita(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "punteggio") val score : Int,
     @ColumnInfo(name = "indiceErrore") val indiceErrore : Int,
-    @ColumnInfo("sequenza") val sequenza : String
+    @ColumnInfo(name = "sequenza") val sequenza : String
 )
