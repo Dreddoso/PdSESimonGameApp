@@ -9,13 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 
-class AdattatoreRV(private val lista: List<Partita>) : RecyclerView.Adapter<AdattatoreRV.PartitaViewHolder>() {
+class AdattatoreRV : RecyclerView.Adapter<AdattatoreRV.PartitaViewHolder>() {
 
-    fun aggiornaLista(){
-        if (lista.isNotEmpty()){
-            val ultimoIndice = lista.size - 1
-            notifyItemInserted(ultimoIndice)
-        }
+    private val lista = mutableListOf<Partita>()
+
+    fun inserisciLista(nuovaLista : List<Partita>){
+        lista.clear()
+        lista.addAll(nuovaLista)
+        notifyDataSetChanged() //TODO: risolvere questo avviso
     }
     class PartitaViewHolder(view: View) : RecyclerView.ViewHolder(view){
 

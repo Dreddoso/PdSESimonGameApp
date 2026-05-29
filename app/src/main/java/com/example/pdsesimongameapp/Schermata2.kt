@@ -34,16 +34,17 @@ class Schermata2 : AppCompatActivity() {
             startActivity(intent)
         }
 
+        adattatoreRV = AdattatoreRV()
+        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView.adapter = adattatoreRV
+
         val db = PartitaDatabase.getDatabase(this@Schermata2)
         val repository = PartitaRepository(db.partitaDao())
-        lifecycleScope.launch {
-            val lista = repository.getPartite()
-            adattatoreRV = AdattatoreRV(lista)
-            //collegamento RecyclerView
-            recyclerView = findViewById(R.id.recyclerView)
-            recyclerView.layoutManager = LinearLayoutManager(this@Schermata2)
-            recyclerView.adapter = adattatoreRV
 
+        lifecycleScope.launch {
+            repository.getPartite().collect { lista ->
+                adattatoreRV.inserisciLista(lista)
+            }
         }
 
 

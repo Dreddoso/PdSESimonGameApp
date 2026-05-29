@@ -22,10 +22,11 @@ abstract class PartitaDatabase : RoomDatabase() {
                     context.applicationContext,
                     PartitaDatabase::class.java,
                     "partite_simon_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
 
                 INSTANCE = instance
-
                 instance
             }
         }
