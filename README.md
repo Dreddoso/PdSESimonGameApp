@@ -1,5 +1,9 @@
 ##Stato del progetto
-Allestimento in corso
+App Funzionante ma ancora grezza 
+Le specifiche mi sembrano essere state implementate correttamente.
+Utilizzo di Room per implementazione di un database e salvataggio locale delle partite.
+Gestione dei toni audio tramite AudioTrack (vengono generati come sinusoidi da una classe).
+Manca un miglioramento da un punto di vista stilistico/design.
 
 ##Informazioni Android
 - Min SDK: API 26 (Android 8.0)
@@ -14,5 +18,5 @@ Allestimento in corso
 
 
 ##Note
-In questa repository sono presenti solo i file contenenti codice kotlin 
-e i file xml (layout,risorse,...).
+I theme presenti non vengono utilizzati. Non è stato implementato il dark mode.
+I toni potrebbero interrompersi in modo anomalo o essere troncati durante rotazioni molto veloci.
