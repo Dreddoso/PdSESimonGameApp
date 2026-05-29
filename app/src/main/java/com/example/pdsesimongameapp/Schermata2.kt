@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 class Schermata2 : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adattatoreRV : AdattatoreRV
-
+    private lateinit var viewModel : ListaPartiteViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,10 +37,14 @@ class Schermata2 : AppCompatActivity() {
 
         adattatoreRV = AdattatoreRV()
         recyclerView = findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adattatoreRV
 
-        val db = PartitaDatabase.getDatabase(this@Schermata2)
-        val repository = PartitaRepository(db.partitaDao())
+        val repository = AppContainer.repository
+        viewModel = ViewModelProvider(
+            this,
+            ListaPartiteViewModelFactory(repository)
+        )[ListaPartiteViewModel::class.java]
 
         lifecycleScope.launch {
             repository.getPartite().collect { lista ->
