@@ -18,6 +18,7 @@ Manca un miglioramento da un punto di vista stilistico/design.
 
 
 ##Note
+Funziona tutto fino a questo punto
 I theme presenti non vengono utilizzati. Non è stato implementato il dark mode.
 Forse i tempi tra un evento e un altro (evidenzziazione di una view durante la visualizzazione della sequenza, ecc) 
     sono troppo brevi, aumentare delay tra eventi. 
