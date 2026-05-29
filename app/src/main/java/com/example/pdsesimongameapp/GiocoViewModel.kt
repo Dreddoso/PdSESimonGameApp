@@ -38,7 +38,10 @@ class GiocoViewModel(private val repository: PartitaRepository,
     private var simonGame : SimonGame = SimonGame()
 
     private var turnoJob : Job? = null
-    private var indiceRiproduzione = 0
+
+    private var indiceRiproduzione : Int
+        get() = savedState["indice_riproduzione"] ?: 0
+        set(value) {savedState["indice_riproduzione"] = value}
 
     private var statoPrePausa : StatoPartita? = null
 
