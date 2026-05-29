@@ -7,11 +7,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.Job
@@ -28,7 +28,9 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-     private lateinit var  viewModel : GiocoViewModel
+     private val  viewModel : GiocoViewModel by viewModels {
+         GiocoViewModelFactory(AppContainer.repository)
+     }
 
     //Componenti UI
     lateinit var griglia : Map<Char, TextView>
@@ -127,11 +129,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val repository = AppContainer.repository
-        val factory = GiocoViewModelFactory(repository)
-
-        viewModel = ViewModelProvider(this,factory)[GiocoViewModel::class.java]
-
         audioGameManager = AudioGameManager()
 
         avviaB = findViewById(R.id.avviaB)
@@ -154,13 +151,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         onBackPressedDispatcher.addCallback(this){
-            val stato = viewModel.uiState.value.statoPartita
-            if (stato == StatoPartita.GAME_OVER){
-                viewModel.salvaPartita()
+            if(viewModel.uiState.value.statoPartita == StatoPartita.GAME_OVER){
+                finish()
             }else{
                 viewModel.concludiPartita()
             }
-            finish()
         }
 
         griglia = mapOf<Char,TextView>(
@@ -216,6 +211,9 @@ class MainActivity : AppCompatActivity() {
                     viewModel.uiState.collect { stato ->
                         aggiornaUIStato(stato)
                         aggiornaInputAttivo(stato.statoPartita == StatoPartita.TURNO_PLAYER)
+                        if(stato.statoPartita == StatoPartita.FINE_PARTITA){
+                            finish()
+                        }
                     }
                 }
             }

@@ -47,7 +47,8 @@ class Schermata2 : AppCompatActivity() {
         )[ListaPartiteViewModel::class.java]
 
         lifecycleScope.launch {
-            repository.getPartite().collect { lista ->
+            viewModel.partite.collect { lista ->
+                //Se voglio vedere le ultime partite in alto usare lista.reversed() (al posto di lista)
                 adattatoreRV.inserisciLista(lista)
             }
         }
