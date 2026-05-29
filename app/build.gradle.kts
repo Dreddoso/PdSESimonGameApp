@@ -1,16 +1,18 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.devtools.ksp)
 }
 
 android {
     namespace = "com.example.pdsesimongameapp"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.pdsesimongameapp"
         minSdk = 26
-        //noinspection OldTargetApi
         targetSdk = 35
+        //noinspection OldTargetApi
         versionCode = 1
         versionName = "1.0"
 
@@ -30,6 +32,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
+    }
 }
 
 dependencies {
@@ -38,12 +43,16 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    implementation(libs.lifecycle.viewmodel.ktx)
+
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    implementation(libs.lifecycle.viewmodel.ktx)
+
+    ksp(libs.androidx.room.compiler)
+
     testImplementation(libs.junit)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    annotationProcessor(libs.androidx.room.compiler)
 }
